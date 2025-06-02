@@ -9,10 +9,10 @@ class Load extends Phaser.Scene {
         this.load.setPath("./assets/");
 
         // Load characters spritesheet
-        this.load.atlas("platformer_characters", "./Packs/tilemap-characters-packed.png", "./Packs/tilemap-characters-packed.json");
+        this.load.atlas("platformer_characters", "./Characters/tilemap-characters-packed.png", "./Characters/tilemap-characters-packed.json");
 
         //Text
-        this.load.bitmapFont("rocketSquare", "KennyRocketSquare_0.png", "KennyRocketSquare.fnt");
+        this.load.bitmapFont("rocketSquare", "./Text/KennyRocketSquare_0.png", "./Text/KennyRocketSquare.fnt");
         // Load tilemap information
         
         this.load.image("tiles", "tilemap_packed.png");
@@ -30,17 +30,11 @@ class Load extends Phaser.Scene {
             frameHeight: 18
         });
         
-        
-
-        // Oooh, fancy. A multi atlas is a texture atlas which has the textures spread
-        // across multiple png files, so as to keep their size small for use with
-        // lower resource devices (like mobile phones).
-        // kenny-particles.json internally has a list of the png files
-        // The multiatlas was created using TexturePacker and the Kenny
-        // Particle Pack asset pack.
+        this.load.setPath("./assets/Particles/");
         this.load.multiatlas("kenny-particles", "kenny-particles.json");
         
-        this.load.bitmapFont("rocketSquare", "KennyRocketSquare_0.png", "KennyRocketSquare.fnt");
+        this.load.setPath("./assets/");
+        this.load.bitmapFont("rocketSquare", "/Text/KennyRocketSquare_0.png", "/Text/KennyRocketSquare.fnt");
 
         this.load.audio("coin", "Audio/impactBell_heavy_000.ogg");
 

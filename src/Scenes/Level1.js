@@ -216,7 +216,7 @@ class Level1_Outside extends Phaser.Scene {
             lifespan: 250,
             gravityY: -100, //Makes float up if negative
             alpha: {start: 1, end: 0.1},
-            //duration: 250,
+            duration: 250,
             repeat: 0
         });
         my.vfx.coining.stop();
@@ -230,7 +230,7 @@ class Level1_Outside extends Phaser.Scene {
             lifespan: 250,
             gravityY: -100, //Makes float up if negative
             alpha: {start: 1, end: 0.1},
-            //duration: 500,
+            duration: 500,
             repeat: 0
         });
         my.vfx.gem.stop();
@@ -321,7 +321,7 @@ class Level1_Outside extends Phaser.Scene {
             if(Phaser.Input.Keyboard.JustDown(cursors.up) && this.jumps == true) {
                 my.sprite.player.body.setVelocityY(this.JUMP_VELOCITY);
                 this.jumps = false;
-                this.jump(my.sprite.player.body);
+                this.double(my.sprite.player.body);
             }
         }
 
@@ -356,11 +356,30 @@ class Level1_Outside extends Phaser.Scene {
             maxAliveParticles: 1, //Limits total particles
             lifespan: 1000,
             // TODO: Try: gravityY: -400,
-            //duration: 1000,
+            duration: 1000,
             gravityY: -10, //Makes float up
             alpha: {start: 1, end: 0.2}, 
             repeat:0
         });
-        
+    }
+    double(sprite) {
+        this.add.particles(sprite.x+10, sprite.y+20, "kenny-particles", {
+            frame: ['slash_02.png'],
+            
+            // TODO: Try: add random: true
+            random: false, //Ranodmizes sprites shown
+            scale: {start: 0.06, end: 0.12},
+            rotaion: 0,
+            scaleX: .25,
+            scaleY: .5,
+            // TODO: Try: maxAliveParticles: 8,
+            maxAliveParticles: 1, //Limits total particles
+            lifespan: 500,
+            // TODO: Try: gravityY: -400,
+            duration: 500,
+            gravityY: 200, //Makes float up
+            alpha: {start: 1, end: 0.2}, 
+            repeat:0
+        });
     }
 }

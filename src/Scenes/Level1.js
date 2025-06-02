@@ -216,7 +216,7 @@ class Level1_Outside extends Phaser.Scene {
             lifespan: 250,
             gravityY: -100, //Makes float up if negative
             alpha: {start: 1, end: 0.1},
-            duration: 250,
+            //duration: 250,
             repeat: 0
         });
         my.vfx.coining.stop();
@@ -230,7 +230,7 @@ class Level1_Outside extends Phaser.Scene {
             lifespan: 250,
             gravityY: -100, //Makes float up if negative
             alpha: {start: 1, end: 0.1},
-            duration: 500,
+            //duration: 500,
             repeat: 0
         });
         my.vfx.gem.stop();
@@ -356,7 +356,7 @@ class Level1_Outside extends Phaser.Scene {
             maxAliveParticles: 1, //Limits total particles
             lifespan: 1000,
             // TODO: Try: gravityY: -400,
-            duration: 1000,
+            //duration: 1000,
             gravityY: -10, //Makes float up
             alpha: {start: 1, end: 0.2}, 
             repeat:0

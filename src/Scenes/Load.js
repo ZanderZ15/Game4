@@ -11,6 +11,8 @@ class Load extends Phaser.Scene {
         // Load characters spritesheet
         this.load.atlas("platformer_characters", "./Packs/tilemap-characters-packed.png", "./Packs/tilemap-characters-packed.json");
 
+        //Text
+        this.load.bitmapFont("rocketSquare", "KennyRocketSquare_0.png", "KennyRocketSquare.fnt");
         // Load tilemap information
         
         this.load.image("tiles", "tilemap_packed.png");
@@ -77,7 +79,7 @@ class Load extends Phaser.Scene {
         });
 
          // ...and pass to the next Scene
-         this.scene.start("level1");
+         this.scene.start("title");
     }
 
     // Never get here since a new scene is started in create()

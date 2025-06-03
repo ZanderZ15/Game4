@@ -146,7 +146,7 @@
     "last.imagePath": "C:/Users/melis/OneDrive/Desktop/ECE/meaprosa/CMPM 120/Game4/assets",
     "map.height": 50,
     "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
-    "map.lastUsedFormat": "tmx",
+    "map.lastUsedFormat": "json",
     "map.tileHeight": 16,
     "map.tileWidth": 16,
     "map.width": 600,

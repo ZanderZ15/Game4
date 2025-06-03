@@ -49,7 +49,7 @@ class MushroomLevel extends Phaser.Scene {
             collision: true
         });
 
-
+        //Add all my annimations
         this.anims.create({
             key: 'coin-spin',
             frames: this.anims.generateFrameNumbers('tilemap_sheet', {
@@ -90,6 +90,7 @@ class MushroomLevel extends Phaser.Scene {
             repeat: -1
         });
 
+        //create all the objects and have there annimations play
         this.coins = this.map.createFromObjects("coins", {
             name: "coin",
             key: "tilemap_sheet",
@@ -100,7 +101,7 @@ class MushroomLevel extends Phaser.Scene {
             coin.anims.play('coin-spin');  // play animation for coins
         });
 
-        this.theStart = this.map.createFromObjects("Coins-End", {
+        this.theStart = this.map.createFromObjects("start-end", {
             name: "flag",
             key: "tilemap_sheet",
             frame: 112
@@ -110,13 +111,23 @@ class MushroomLevel extends Phaser.Scene {
             flag.anims.play('flag-wave');
         });
 
-        this.theStart = this.map.createFromObjects("Coins-End", {
+        this.waters = this.map.createFromObjects("death", {
+            name: "water",
+            key: "tilemap_sheet",
+            frame: 33
+        });
+
+        this.waters.forEach(water => {
+            water.anims.play('water-move'); 
+        })
+
+        this.theStart = this.map.createFromObjects("start-end", {
             name: "start",
             key: "tilemap_sheet",
             frame: 131
         });
 
-        this.endFlags = this.map.createFromObjects("Coins-End", {
+        this.endFlags = this.map.createFromObjects("start-end", {
             name: "end",
             key: "tilemap_sheet",
             frame: 131
@@ -126,20 +137,22 @@ class MushroomLevel extends Phaser.Scene {
         // them into Arcade Physics sprites (STATIC_BODY, so they don't move) 
         this.physics.world.enable(this.coins, Phaser.Physics.Arcade.STATIC_BODY);
         this.physics.world.enable(this.endFlags, Phaser.Physics.Arcade.STATIC_BODY);
+        this.physics.world.enable(this.waters, Phaser.Physics.Arcade.STATIC_BODY);
 
         // Create a Phaser group out of the array this.coins
         // This will be used for collision detection below.
         this.coinGroup = this.add.group(this.coins);
         this.endGroup = this.add.group(this.endFlags);
+        this.waterGroup = this.add.group(this.waters); 
 
         // set up player avatar
-        this.spawnPoint = this.map.findObject("Coins-End", obj => obj.name === "start");
+        this.spawnPoint = this.map.findObject("start-end", obj => obj.name === "start");
         my.sprite.player = this.physics.add.sprite(this.spawnPoint.x, this.spawnPoint.y, "frog", "idle");
         my.sprite.player.setCollideWorldBounds(true);
 
         // Enable collision handling
         this.physics.add.collider(my.sprite.player, this.groundLayer);
-        this.physics.add.collider(my.sprite.player, this.treeClouds);
+        this.physics.add.collider(my.sprite.player, this.mush);
 
         my.vfx.coinParticles = this.add.particles(0, 0, "star",
             {

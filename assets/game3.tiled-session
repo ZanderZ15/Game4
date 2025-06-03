@@ -10,9 +10,29 @@
     "fileStates": {
         "": {
             "scaleInDock": 2,
-            "scaleInEditor": 4
+            "scaleInEditor": 3
         },
         "#tileset1": {
+            "scaleInDock": 1
+        },
+        "C:/Users/melis/OneDrive/Desktop/ECE/meaprosa/CMPM 120/Seasons-Greetings/assets/seasonworld.tmx": {
+            "scale": 2,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 332.25,
+                "y": 1089
+            }
+        },
+        "C:/Users/melis/OneDrive/Desktop/ECE/meaprosa/CMPM 120/Seasons-Greetings/assets/seasonworld.tmx#Backround-Map": {
+            "scaleInDock": 1
+        },
+        "C:/Users/melis/OneDrive/Desktop/ECE/meaprosa/CMPM 120/Seasons-Greetings/assets/seasonworld.tmx#Candy-Platform": {
+            "scaleInDock": 1
+        },
+        "C:/Users/melis/OneDrive/Desktop/ECE/meaprosa/CMPM 120/Seasons-Greetings/assets/seasonworld.tmx#Farm-Platformer": {
+            "scaleInDock": 1
+        },
+        "C:/Users/melis/OneDrive/Desktop/ECE/meaprosa/CMPM 120/Seasons-Greetings/assets/seasonworld.tmx#Main-Platform": {
             "scaleInDock": 1
         },
         "C:/Users/zande/OneDrive/Desktop/CMPM 120/Section Assignments/S7_PlatformImprovement/assets/platformer-level-1.tmj": {
@@ -41,8 +61,8 @@
             "scale": 1,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 6008.5,
-                "y": 702.5
+                "x": -429,
+                "y": 703
             }
         },
         "Level1_Outside.json#Backgrounds": {
@@ -88,6 +108,26 @@
         "Packs/kenney_pixel-platformer/Tiled/tileset-tiles.tsx": {
             "scaleInDock": 1
         },
+        "level1.tmx": {
+            "scale": 1.5,
+            "selectedLayer": -1,
+            "viewCenter": {
+                "x": 356.33333333333337,
+                "y": 224.66666666666663
+            }
+        },
+        "level1.tmx#bg-grasslands": {
+            "scaleInDock": 1
+        },
+        "level1.tmx#bg-shroom": {
+            "scaleInDock": 0.75
+        },
+        "level1.tmx#tilemap-backgrounds": {
+            "scaleInDock": 3
+        },
+        "level1.tmx#tilemap-base": {
+            "scaleInDock": 2
+        },
         "packed.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 0.75
@@ -100,10 +140,10 @@
     "frame.defaultDuration": 230,
     "last.exportedFilePath": "C:/Users/zande/OneDrive/Desktop/CMPM 120/Game3/assets",
     "last.externalTilesetPath": "C:/Users/zande/OneDrive/Desktop/CMPM 120/Game3/assets",
-    "last.imagePath": "C:/Users/zande/OneDrive/Desktop/CMPM 120/Game3/assets/Packs/kenney_pixel-platformer/Tilemap",
+    "last.imagePath": "C:/Users/melis/OneDrive/Desktop/ECE/meaprosa/CMPM 120/Game4/assets",
     "map.height": 50,
     "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
-    "map.lastUsedFormat": "json",
+    "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,
     "map.tileWidth": 16,
     "map.width": 600,
@@ -114,6 +154,7 @@
     "property.type": "bool",
     "recentFiles": [
         "Level1_Outside.json",
+        "C:/Users/melis/OneDrive/Desktop/ECE/meaprosa/CMPM 120/Seasons-Greetings/assets/seasonworld.tmx",
         "packed.tsx",
         "tiles1.tsx",
         "Level1_Outside.tmj",
@@ -126,6 +167,6 @@
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
         "height": 18,
-        "width": 14
+        "width": 18
     }
 }

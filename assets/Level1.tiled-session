@@ -1,0 +1,50 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "level1.tmx",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "level1.tmx": {
+            "scale": 2,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 273,
+                "y": 424.5
+            }
+        },
+        "level1.tmx#bg-grasslands": {
+            "scaleInDock": 1
+        },
+        "level1.tmx#bg-shroom": {
+            "scaleInDock": 1
+        },
+        "level1.tmx#tilemap-backgrounds": {
+            "scaleInDock": 5.5
+        },
+        "level1.tmx#tilemap-base": {
+            "scaleInDock": 2
+        }
+    },
+    "last.imagePath": "C:/Users/melis/OneDrive/Desktop/ECE/meaprosa/CMPM 120/Game4/assets",
+    "map.height": 30,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 18,
+    "map.tileWidth": 18,
+    "map.width": 60,
+    "openFiles": [
+        "level1.tmx"
+    ],
+    "project": "Level1.tiled-project",
+    "recentFiles": [
+        "level1.tmx"
+    ],
+    "tileset.embedInMap": true,
+    "tileset.tileSize": {
+        "height": 18,
+        "width": 18
+    }
+}

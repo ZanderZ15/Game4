@@ -12,6 +12,7 @@ class Title extends Phaser.Scene {
         my.text.ptp = this.add.bitmapText(width/2, 520, "rocketSquare", "Press SPACE to play").setOrigin(.5, 0);
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.zeroKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ZERO);
+        this.mKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
     }
     update() {
         if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
@@ -19,6 +20,9 @@ class Title extends Phaser.Scene {
         }
         if (Phaser.Input.Keyboard.JustDown(this.zeroKey)) {
             this.scene.start("end");
+        }
+        if (Phaser.Input.Keyboard.JustDown(this.mKey)) {
+            this.scene.start("mountain");
         }
     }
 }

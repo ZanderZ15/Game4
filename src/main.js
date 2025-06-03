@@ -32,7 +32,7 @@ let config = {
     },
     width: 1520,
     height: 670,
-    scene: [Load, Title, Level1_Outside, Volcano],
+    scene: [Load, Title, Level1_Outside, Volcano, Mountain],
     
 }
 var cursors;

@@ -9,8 +9,8 @@
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "": {
-            "scaleInDock": 2,
-            "scaleInEditor": 3
+            "scaleInDock": 0.75,
+            "scaleInEditor": 4
         },
         "#tileset1": {
             "scaleInDock": 1
@@ -58,11 +58,11 @@
             "scaleInDock": 1
         },
         "Level1_Outside.json": {
-            "scale": 1,
+            "scale": 0.33,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": -429,
-                "y": 703
+                "x": 1460.6060606060607,
+                "y": 671.2121212121212
             }
         },
         "Level1_Outside.json#Backgrounds": {
@@ -109,10 +109,13 @@
             "scaleInDock": 1
         },
         "level1.tmx": {
+            "expandedObjectLayers": [
+                5
+            ],
             "scale": 1.5,
-            "selectedLayer": -1,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 356.33333333333337,
+                "x": 354.33333333333337,
                 "y": 224.66666666666663
             }
         },

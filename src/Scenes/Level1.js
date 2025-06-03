@@ -260,8 +260,8 @@ class Level1_Outside extends Phaser.Scene {
     update() {
         if(cursors.left.isDown) {
             my.sprite.player.setAccelerationX(-this.ACCELERATION);
-            my.sprite.player.resetFlip();
-            my.sprite.player.anims.play('walk', true);
+            my.sprite.player.setFlip(true, false);
+            my.sprite.player.anims.play('hop', true);
             // Particle Following
             my.vfx.walking.startFollow(my.sprite.player, my.sprite.player.displayWidth/2-5, my.sprite.player.displayHeight/2-2, false);
             my.vfx.walking.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
@@ -274,8 +274,8 @@ class Level1_Outside extends Phaser.Scene {
 
         } else if(cursors.right.isDown) {
             my.sprite.player.setAccelerationX(this.ACCELERATION);
-            my.sprite.player.setFlip(true, false);
-            my.sprite.player.anims.play('walk', true);
+            my.sprite.player.resetFlip();
+            my.sprite.player.anims.play('hop', true);
             // Particle Following
             my.vfx.walking.startFollow(my.sprite.player, my.sprite.player.displayWidth/2-20, my.sprite.player.displayHeight/2-2, false);
             my.vfx.walking.setParticleSpeed(-this.PARTICLE_VELOCITY, 0);

@@ -1,6 +1,6 @@
 class MushroomLevel extends Phaser.Scene {
     constructor() {
-        super("mushroom")
+        super("mushroomlevel")
     }
    
     init() {
@@ -17,6 +17,8 @@ class MushroomLevel extends Phaser.Scene {
 
     create() 
     {
+        //Load in sounds
+        this.coinSound = this.sound.add("coinBoing");
 
         // Create a new tilemap game object which uses 18x18 pixel tiles, and is
         // 45 tiles wide and 25 tiles tall.
@@ -145,7 +147,7 @@ class MushroomLevel extends Phaser.Scene {
         this.endGroup = this.add.group(this.endFlags);
         this.waterGroup = this.add.group(this.waters); 
 
-        // set up player avatar
+        // set up player avatar have them spawn at the start 
         this.spawnPoint = this.map.findObject("start-end", obj => obj.name === "start");
         my.sprite.player = this.physics.add.sprite(this.spawnPoint.x, this.spawnPoint.y, "frog", "idle");
         my.sprite.player.setCollideWorldBounds(true);
@@ -154,6 +156,7 @@ class MushroomLevel extends Phaser.Scene {
         this.physics.add.collider(my.sprite.player, this.groundLayer);
         this.physics.add.collider(my.sprite.player, this.mush);
 
+        //need to change this to whatever partticle effect we will have for our coin collection
         my.vfx.coinParticles = this.add.particles(0, 0, "star",
             {
                 scale: {start: 5, end: 0.1},
@@ -165,8 +168,7 @@ class MushroomLevel extends Phaser.Scene {
         my.vfx.coinParticles.stop();
 
         // Handle collision detection with coins
-        this.physics.add.overlap(my.sprite.player, this.coinGroup, (obj1, obj2) => {
-            this.elaspedTime -= 5.00; 
+        this.physics.add.overlap(my.sprite.player, this.coinGroup, (obj1, obj2) => { 
             obj2.destroy(); // remove coin on overlap
             my.vfx.coinParticles.explode(12, obj2.x, obj2.y);
             this.coinSound.play();
@@ -176,18 +178,14 @@ class MushroomLevel extends Phaser.Scene {
         //collison detection with end flag
         if(this.physics.add.overlap(my.sprite.player, this.endGroup, () =>
             {
-                this.timerActive = false;
-                if(this.elaspedTime < this.fastestTime || this.fastestTime == 0)
-                {
-                    localStorage.setItem("FastestTime", this.elaspedTime); 
-                    this.fastestTime = this.elaspedTime;
-                }
+                /*
                 if(this.sound.get("background"))
                 {
                     this.backGroundMusic.destroy();
                 }
-                this.scene.stop("platformerScene");
-                this.scene.start("over", {finalTime: this.elaspedTime.toFixed(2), fastTime: this.fastestTime.toFixed(2)});
+                */
+                this.scene.stop("mushroomlevel");
+                this.scene.start("mountain");
             }
         ));
        

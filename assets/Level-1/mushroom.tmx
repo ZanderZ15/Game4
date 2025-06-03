@@ -440,9 +440,9 @@
 </data>
  </layer>
  <objectgroup id="8" name="start-end">
-  <object id="96" name="start" gid="112" x="36.25" y="215.5" width="18" height="18"/>
+  <object id="96" name="flag" gid="112" x="36.25" y="215.5" width="18" height="18"/>
   <object id="97" name="start" gid="132" x="36" y="233.75" width="18" height="18"/>
-  <object id="98" name="end" gid="112" x="1565.91" y="251.909" width="18" height="18"/>
+  <object id="98" name="flag" gid="112" x="1565.91" y="251.909" width="18" height="18"/>
   <object id="99" name="end" gid="132" x="1565.91" y="270.091" width="18" height="18"/>
  </objectgroup>
 </map>

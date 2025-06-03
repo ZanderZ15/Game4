@@ -12,6 +12,7 @@ class Mushroom extends Phaser.Scene {
         this.PARTICLE_VELOCITY = 50;
         this.SCALE = config.width / 720;
         this.coinsCollected = 0;
+        this.amountOfCoins = 30; 
     }
 
     create() 
@@ -19,15 +20,14 @@ class Mushroom extends Phaser.Scene {
         //Load in sounds
         this.coinSound = this.sound.add("coinBoing");
 
-        //load in background music to be changedddd
-        /*
-        if(!this.sound.get("background"))
+        //load in background music
+    
+        if(!this.sound.get("backgroundMush"))
         {
-            this.backGroundMusic = this.sound.add("background", {loop: true, volume: 0.5});
+            this.backGroundMusic = this.sound.add("backgroundMush", {loop: true, volume: 0.5});
             this.backGroundMusic.play();
         }
-        */
-
+        
         // Create a new tilemap game object which uses 18x18 pixel tiles, and is
         // 45 tiles wide and 25 tiles tall.
         this.map = this.add.tilemap("mushroom", 18, 18, 90, 20);
@@ -164,7 +164,7 @@ class Mushroom extends Phaser.Scene {
         this.physics.add.collider(my.sprite.player, this.groundLayer);
         this.physics.add.collider(my.sprite.player, this.mush);
 
-        //need to change this to whatever partticle effect we will have for our coin collection
+        //Coin VFX
         my.vfx.coinParticles = this.add.particles(0, 0, "star",
             {
                 scale: {start: 5, end: 0.1},
@@ -175,25 +175,39 @@ class Mushroom extends Phaser.Scene {
         );
         my.vfx.coinParticles.stop();
 
+
         // Handle collision detection with coins
         this.physics.add.overlap(my.sprite.player, this.coinGroup, (obj1, obj2) => { 
             obj2.destroy(); // remove coin on overlap
+            this.coinsCollected += 1; 
             my.vfx.coinParticles.explode(12, obj2.x, obj2.y);
             this.coinSound.play();
             
         });
 
+        this.physics.add.overlap(my.sprite.player, this.waterGroup, (obj1, obj2) => {
+            my.sprite.player.body.setVelocityX(0);
+            my.sprite.player.body.setVelocityY(0);
+            obj1.x = this.start.x; 
+            obj1.y = this.start.y;
+        });
+
+        //TODO: make a collision handle for when you pick up the power up activate double jump
+
         //collison detection with end flag
         if(this.physics.add.overlap(my.sprite.player, this.endGroup, () =>
             {
-                /*
-                if(this.sound.get("background"))
+                //need to add an if statement for if the coins collected == the amount of coins, which i can do rn!
+                if(this.coinsCollected == this.amountOfCoins)
                 {
-                    this.backGroundMusic.destroy();
+                    
+                    if(this.sound.get("backgroundMush"))
+                    {
+                        this.backGroundMusic.destroy();
+                    }
+                    this.scene.stop("mushroomlevel");
+                    this.scene.start("mountain");
                 }
-                */
-                this.scene.stop("mushroomlevel");
-                this.scene.start("mountain");
             }
         ));
        
@@ -213,78 +227,33 @@ class Mushroom extends Phaser.Scene {
         this.physics.world.debugGraphic.clear();
 
        // movement vfx here
-        my.vfx.walking = this.add.particles(0, -5, 'runVFX', {
-            lifespan: 350,
-            gravityY: -400,
-            alpha: { start: 1, end: 0.1 },
-            scale: { start: 1.2, end: 0.1 },
-            speedX: { min: -20, max: 20 },
-            speedY: { min: 10, max: 40 },
-            maxAliveParticles: 5,
+        my.vfx.walking = this.add.particles(0, 0, "kenny-particles", 
+        {
+            frame: ['flame_05.png', 'flame_06.png'],
+            random: false, //Ranodmizes sprites shown
+            scale: {start: 0.03, end: 0.2},
+            maxAliveParticles: 10, //Limits total particles
+            lifespan: 200,
+            gravityY: -500, //Makes float up
+            alpha: {start: 1, end: 0.1}, 
             frequency: 100
         });
-        my.vfx.walking.stop();  
+        my.vfx.walking.stop();
 
-        my.vfx.jump = this.add.particles(0, -10, 'whoosh', 
-            {
-                lifespan: 350,
-                gravityY: -400,
-                alpha: { start: 1, end: 0.1 },
-                scale: { start: 1.5, end: 0.1 },
-                speedX: { min: -20, max: 20 },
-                speedY: { min: 10, max: 40 },
-                maxAliveParticles: 1,
-                frequency: 100
-            }
-        );
-        my.vfx.jump.stop(); 
-
-        
-        this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+        //TODO: Add a jump VFX
 
         //camera code here
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         this.cameras.main.startFollow(my.sprite.player, true, 0.25, 0.25); // (target, [,roundPixels][,lerpX][,lerpY])
         this.cameras.main.setDeadzone(50, 50);
         this.cameras.main.setZoom(this.SCALE);
-        /*this.events.on('postupdate', () => {
-            const cam = this.cameras.main;
-            //cam.scrollY = Math.round(cam.scrollY / 2) * 2;
-        });*/
-       
-        console.log(this.map.widthInPixels/2 * this.SCALE - this.map.widthInPixels/2 + 10);
-        console.log(this.map.widthInPixels/2 * this.SCALE);
-        console.log(this.SCALE);
-        console.log(this.map.widthInPixels/2);
-        console.log(window.innerWidth);
-        console.log(config.width);
-
-        console.log("L");
-        console.log(this.map.widthInPixels / (window.innerWidth - 50) * (window.innerHeight - 20));
-
-        let aspectRatio = (this.map.heightInPixels * SCALE / 4) / (this.map.widthInPixels * SCALE);
-
-        this.timerText = this.add.text(
-            (this.map.widthInPixels/2 * this.SCALE - this.map.widthInPixels/2)/*Align to left edge*/ + 15, 
-            (this.map.heightInPixels/8 * this.SCALE - this.map.heightInPixels/8)/*Align to top edge*/ + 5,
-            'Time: 0.00', 
-            {
-                fontSize: '25px',
-                fill: '#ffffff',
-                fontFamily: 'monospace'
-            }
-        );
-        this.timerText.setOrigin(0, 0);
-        this.timerText.setScrollFactor(0);
-        this.timerText.setDepth(1);
-
-        this.timerBG = this.add.rectangle(
-            (this.map.widthInPixels/2 * this.SCALE - this.map.widthInPixels/2), 
-            (this.map.heightInPixels/8 * this.SCALE - this.map.heightInPixels/8),
-            this.timerText.width + 30,         // add padding
-            this.timerText.height + 10,
-            0x000000               // black color in hex
-        ).setOrigin(0, 0).setDepth(0).setScrollFactor(0);  // behind text
+        
+        my.text.score = this.add.text(353, 162, 'SCORE: '+this.score, {
+            font: '16px Arial',
+            fill: '#000000',
+            resolution: 10
+        });
+        my.text.score.setScrollFactor(0);
        
         
     }

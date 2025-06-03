@@ -48,6 +48,7 @@ class Load extends Phaser.Scene {
         //load in kennies particles and such
         this.load.setPath("./assets/Particles/");
         this.load.multiatlas("kenny-particles", "kenny-particles.json");
+        this.load.image("star", "star.png");
         
         //load in the font
         this.load.setPath("./assets/");
@@ -55,6 +56,7 @@ class Load extends Phaser.Scene {
 
         //load in audio
         this.load.audio("coinBoing", "jingles_SAX04.ogg");
+        this.load.audio("backgroundMush", "best-game-console-301284.mp3");
 
         
     }

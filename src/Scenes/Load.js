@@ -21,7 +21,7 @@ class Load extends Phaser.Scene {
         //load in extra particle effects, sprites, power ups ext...
         this.load.image("double-jump", "double-jump.png"); 
 
-        //load in level 1 tilemap
+        //load in level 1 mushroom tilemap
         this.load.tilemapTiledJSON("mushroom", "./Level-1/mushroom.tmj");
         
         //Zanders past project tile map
@@ -54,7 +54,7 @@ class Load extends Phaser.Scene {
         this.load.bitmapFont("rocketSquare", "/Text/KennyRocketSquare_0.png", "/Text/KennyRocketSquare.fnt");
 
         //load in audio
-        this.load.audio("coin", "Audio/impactBell_heavy_000.ogg");
+        this.load.audio("coinBoing", "jingles_SAX04.ogg");
 
         
     }

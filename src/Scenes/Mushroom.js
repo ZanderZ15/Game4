@@ -1,4 +1,4 @@
-class MushroomLevel extends Phaser.Scene {
+class Mushroom extends Phaser.Scene {
     constructor() {
         super("mushroomlevel")
     }
@@ -11,14 +11,22 @@ class MushroomLevel extends Phaser.Scene {
         this.JUMP_VELOCITY = -600;
         this.PARTICLE_VELOCITY = 50;
         this.SCALE = config.width / 720;
-        this.elaspedTime = 0;
-        this.timerActive = false;
+        this.coinsCollected = 0;
     }
 
     create() 
     {
         //Load in sounds
         this.coinSound = this.sound.add("coinBoing");
+
+        //load in background music to be changedddd
+        /*
+        if(!this.sound.get("background"))
+        {
+            this.backGroundMusic = this.sound.add("background", {loop: true, volume: 0.5});
+            this.backGroundMusic.play();
+        }
+        */
 
         // Create a new tilemap game object which uses 18x18 pixel tiles, and is
         // 45 tiles wide and 25 tiles tall.

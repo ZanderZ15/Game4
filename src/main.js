@@ -33,6 +33,16 @@ let config = {
     width: 1520,
     height: 670,
     scene: [Load, Title, Level1_Outside, Volcano, Mountain, Mushroom],
+
+    plugins: {
+        scene: [
+            {
+                key: 'AnimatedTiles',
+                plugin: window.AnimatedTiles, // must match how it's loaded
+                mapping: 'animatedTiles'
+            }
+        ]
+    }
     
 }
 var cursors;

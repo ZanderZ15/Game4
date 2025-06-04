@@ -930,7 +930,7 @@
                  "gid":1749,
                  "height":18,
                  "id":100,
-                 "name":"",
+                 "name":"doublejump",
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -1013,8 +1013,8 @@
                  "type":"",
                  "visible":true,
                  "width":18,
-                 "x":1565.90909090909,
-                 "y":251.909090909091
+                 "x":1565.91,
+                 "y":251.909
                 }, 
                 {
                  "gid":132,
@@ -1025,8 +1025,8 @@
                  "type":"",
                  "visible":true,
                  "width":18,
-                 "x":1565.90909090909,
-                 "y":270.090909090909
+                 "x":1565.91,
+                 "y":270.091
                 }],
          "opacity":1,
          "type":"objectgroup",

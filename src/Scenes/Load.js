@@ -55,8 +55,8 @@ class Load extends Phaser.Scene {
         this.load.bitmapFont("rocketSquare", "/Text/KennyRocketSquare_0.png", "/Text/KennyRocketSquare.fnt");
 
         //load in audio
-        this.load.audio("coinBoing", "jingles_SAX04.ogg");
-        this.load.audio("backgroundMush", "best-game-console-301284.mp3");
+        this.load.audio("coinBoing", "/Audio/jingles_SAX04.ogg");
+        this.load.audio("backgroundMush", "/Audio/best-game-console-301284.mp3");
 
         
     }

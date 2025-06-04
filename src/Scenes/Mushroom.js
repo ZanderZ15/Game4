@@ -13,6 +13,8 @@ class Mushroom extends Phaser.Scene {
         this.SCALE = config.width / 720;
         this.coinsCollected = 0;
         this.amountOfCoins = 30; 
+        this.jumps = false;
+        this.powerUp = false; 
     }
 
     create() 
@@ -80,12 +82,13 @@ class Mushroom extends Phaser.Scene {
             repeat: -1
         });
 
+        
         this.anims.create({
             key: 'water-move',
-            frames: this.anims.generateFrameNumbers('tilemap_sheet', {
-                start: 33,
-                end: 53
-            }),
+            frames: [
+                { key: 'tilemap_sheet', frame: 33 },
+                { key: 'tilemap_sheet', frame: 53 }
+            ],
             frameRate: 6,
             repeat: -1
         });
@@ -129,7 +132,17 @@ class Mushroom extends Phaser.Scene {
 
         this.waters.forEach(water => {
             water.anims.play('water-move'); 
-        })
+        });
+
+        this.powerUps = this.map.createFromObjects("powerUp", {
+            name: "doublejump",
+            key: "doubleJump_sheet",
+            frame: 0
+        });
+
+        this.powerUps.forEach(doublejump => {
+            doublejump.anims.play('bounce-powerUp')
+        });
 
         this.theStart = this.map.createFromObjects("start-end", {
             name: "start",
@@ -143,17 +156,22 @@ class Mushroom extends Phaser.Scene {
             frame: 131
         });
 
+
+
         // Since createFromObjects returns an array of regular Sprites, we need to convert 
         // them into Arcade Physics sprites (STATIC_BODY, so they don't move) 
         this.physics.world.enable(this.coins, Phaser.Physics.Arcade.STATIC_BODY);
         this.physics.world.enable(this.endFlags, Phaser.Physics.Arcade.STATIC_BODY);
         this.physics.world.enable(this.waters, Phaser.Physics.Arcade.STATIC_BODY);
+        this.physics.world.enable(this.powerUps, Phaser.Physics.Arcade.STATIC_BODY);
+
 
         // Create a Phaser group out of the array this.coins
         // This will be used for collision detection below.
         this.coinGroup = this.add.group(this.coins);
         this.endGroup = this.add.group(this.endFlags);
         this.waterGroup = this.add.group(this.waters); 
+        this.powerUpGroup = this.add.group(this.powerUps); 
 
         // set up player avatar have them spawn at the start 
         this.spawnPoint = this.map.findObject("start-end", obj => obj.name === "start");
@@ -176,10 +194,11 @@ class Mushroom extends Phaser.Scene {
         my.vfx.coinParticles.stop();
 
 
-        // Handle collision detection with coins
+        // Handle collision detection with coins, water, and the powerUp
         this.physics.add.overlap(my.sprite.player, this.coinGroup, (obj1, obj2) => { 
             obj2.destroy(); // remove coin on overlap
             this.coinsCollected += 1; 
+            my.text.score.setText('Coins Collected: ' + this.coinsCollected + '/' + this.amountOfCoins);
             my.vfx.coinParticles.explode(12, obj2.x, obj2.y);
             this.coinSound.play();
             
@@ -193,6 +212,11 @@ class Mushroom extends Phaser.Scene {
         });
 
         //TODO: make a collision handle for when you pick up the power up activate double jump
+        this.physics.add.overlap(my.sprite.player, this.powerUpGroup, (obj1, obj2) => { 
+            obj2.destroy(); // remove powerUP on overlap
+            this.powerUp = true; 
+            
+        });
 
         //collison detection with end flag
         if(this.physics.add.overlap(my.sprite.player, this.endGroup, () =>
@@ -248,7 +272,7 @@ class Mushroom extends Phaser.Scene {
         this.cameras.main.setDeadzone(50, 50);
         this.cameras.main.setZoom(this.SCALE);
         
-        my.text.score = this.add.text(353, 162, 'SCORE: '+this.score, {
+        my.text.score = this.add.text(353, 162, 'Coins Collected: ' + this.coinsCollected + '/' + this.amountOfCoins, {
             font: '16px Arial',
             fill: '#000000',
             resolution: 10
@@ -259,6 +283,69 @@ class Mushroom extends Phaser.Scene {
     }
 
     update() {
-        
+        if(cursors.left.isDown) {
+            my.sprite.player.setAccelerationX(-this.ACCELERATION);
+            my.sprite.player.setFlip(true, false);
+            my.sprite.player.anims.play('hop', true);
+            my.vfx.walking.startFollow(my.sprite.player, my.sprite.player.displayWidth/2-10, my.sprite.player.displayHeight/2-5, false);
+
+            my.vfx.walking.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
+
+            // Only play smoke effect if touching the ground
+
+            if (my.sprite.player.body.blocked.down) {
+
+                my.vfx.walking.start();
+
+            }
+
+        } else if(cursors.right.isDown) {
+            my.sprite.player.setAccelerationX(this.ACCELERATION);
+            my.sprite.player.resetFlip();;
+            my.sprite.player.anims.play('hop', true);
+            // particle following code here
+            my.vfx.walking.startFollow(my.sprite.player, my.sprite.player.displayWidth/2-10, my.sprite.player.displayHeight/2-5, true);
+
+            my.vfx.walking.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
+
+            // Only play smoke effect if touching the ground
+
+            if (my.sprite.player.body.blocked.down) {
+
+                my.vfx.walking.start();
+
+            }
+
+        } else {
+            // Set acceleration to 0 and have DRAG take over
+            my.sprite.player.setAccelerationX(0);
+            my.sprite.player.setDragX(this.DRAG);
+            my.sprite.player.anims.play('idle');
+            // vfx stop playing
+            my.vfx.walking.stop();
+        }
+
+        // player jump
+        // note that we need body.blocked rather than body.touching b/c the former applies to tilemap tiles and the latter to the "ground"
+        if(my.sprite.player.body.blocked.down) {
+            this.jumps = true;
+            if(Phaser.Input.Keyboard.JustDown(cursors.up)) {
+                my.sprite.player.body.setVelocityY(this.JUMP_VELOCITY);
+                //this.jump(my.sprite.player.body); this is for vfx I have yet to impliment
+            }
+        } else {
+            //my.sprite.player.anims.play('jump');
+            if(Phaser.Input.Keyboard.JustDown(cursors.up) && this.jumps == true && this.powerUp == true) {
+                my.sprite.player.body.setVelocityY(this.JUMP_VELOCITY);
+                this.jumps = false;
+                //this.double(my.sprite.player.body); this is for vfx i have yet to impliment
+            }
+        }
+       
+
+        if(Phaser.Input.Keyboard.JustDown(this.rKey)) {
+            this.scene.restart();
+        }
+
     }
 }

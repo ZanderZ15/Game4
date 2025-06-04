@@ -272,8 +272,11 @@ class Mushroom extends Phaser.Scene {
         this.cameras.main.startFollow(my.sprite.player, true, 0.25, 0.25); // (target, [,roundPixels][,lerpX][,lerpY])
         this.cameras.main.setDeadzone(50, 50);
         this.cameras.main.setZoom(this.SCALE);
-        
-        my.text.score = this.add.text(353, 162, 'Coins Collected: ' + this.coinsCollected + '/' + this.amountOfCoins, {
+
+        this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+
+        //update on screan text to update when coins collected
+        my.text.score = this.add.text(355, 180, 'Coins Collected: ' + this.coinsCollected + '/' + this.amountOfCoins, {
             font: '16px Arial',
             fill: '#000000',
             resolution: 10
@@ -284,6 +287,7 @@ class Mushroom extends Phaser.Scene {
     }
 
     update() {
+        //yay movement
         if(cursors.left.isDown) {
             my.sprite.player.setAccelerationX(-this.ACCELERATION);
             my.sprite.player.setFlip(true, false);
@@ -350,7 +354,7 @@ class Mushroom extends Phaser.Scene {
             }
         }
        
-
+        //funny reset to make it easy for me to test
         if(Phaser.Input.Keyboard.JustDown(this.rKey)) {
             this.scene.restart();
         }

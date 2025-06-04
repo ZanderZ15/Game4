@@ -175,7 +175,7 @@ class Mushroom extends Phaser.Scene {
 
         // set up player avatar have them spawn at the start 
         this.spawnPoint = this.map.findObject("start-end", obj => obj.name === "start");
-        my.sprite.player = this.physics.add.sprite(this.spawnPoint.x, this.spawnPoint.y, "frog", "idle");
+        my.sprite.player = this.physics.add.sprite(this.spawnPoint.x, this.spawnPoint.y-10, "frog", "idle");
         my.sprite.player.setCollideWorldBounds(true);
         my.sprite.player.setSize(18, 18).setOffset(1,1);
 
@@ -208,8 +208,8 @@ class Mushroom extends Phaser.Scene {
         this.physics.add.overlap(my.sprite.player, this.waterGroup, (obj1, obj2) => {
             my.sprite.player.body.setVelocityX(0);
             my.sprite.player.body.setVelocityY(0);
-            obj1.x = this.start.x; 
-            obj1.y = this.start.y;
+            obj1.x = this.spawnPoint.x; 
+            obj1.y = this.spawnPoint.y - 10;
         });
 
         //TODO: make a collision handle for when you pick up the power up activate double jump
@@ -272,8 +272,11 @@ class Mushroom extends Phaser.Scene {
         this.cameras.main.startFollow(my.sprite.player, true, 0.25, 0.25); // (target, [,roundPixels][,lerpX][,lerpY])
         this.cameras.main.setDeadzone(50, 50);
         this.cameras.main.setZoom(this.SCALE);
-        
-        my.text.score = this.add.text(353, 162, 'Coins Collected: ' + this.coinsCollected + '/' + this.amountOfCoins, {
+
+        this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+
+        //update on screan text to update when coins collected
+        my.text.score = this.add.text(355, 180, 'Coins Collected: ' + this.coinsCollected + '/' + this.amountOfCoins, {
             font: '16px Arial',
             fill: '#000000',
             resolution: 10
@@ -284,6 +287,7 @@ class Mushroom extends Phaser.Scene {
     }
 
     update() {
+        //yay movement
         if(cursors.left.isDown) {
             my.sprite.player.setAccelerationX(-this.ACCELERATION);
             my.sprite.player.setFlip(true, false);
@@ -302,7 +306,7 @@ class Mushroom extends Phaser.Scene {
 
         } else if(cursors.right.isDown) {
             my.sprite.player.setAccelerationX(this.ACCELERATION);
-            my.sprite.player.resetFlip();;
+            my.sprite.player.resetFlip();
             my.sprite.player.anims.play('hop', true);
             // particle following code here
             my.vfx.walking.startFollow(my.sprite.player, my.sprite.player.displayWidth/2-10, my.sprite.player.displayHeight/2-5, true);
@@ -321,17 +325,24 @@ class Mushroom extends Phaser.Scene {
             // Set acceleration to 0 and have DRAG take over
             my.sprite.player.setAccelerationX(0);
             my.sprite.player.setDragX(this.DRAG);
-            my.sprite.player.anims.play('idle');
+            if (my.sprite.player.body.blocked.down) 
+            {
+                my.sprite.player.anims.play('idle');
+            }
             // vfx stop playing
             my.vfx.walking.stop();
         }
 
         // player jump
         // note that we need body.blocked rather than body.touching b/c the former applies to tilemap tiles and the latter to the "ground"
+        if(!my.sprite.player.body.blocked.down) {
+            my.sprite.player.anims.play('jump');
+        }
         if(my.sprite.player.body.blocked.down) {
             this.jumps = true;
             if(Phaser.Input.Keyboard.JustDown(cursors.up)) {
                 my.sprite.player.body.setVelocityY(this.JUMP_VELOCITY);
+                my.sprite.player.anims.play('jump');
                 //this.jump(my.sprite.player.body); this is for vfx I have yet to impliment
             }
         } else {
@@ -343,7 +354,7 @@ class Mushroom extends Phaser.Scene {
             }
         }
        
-
+        //funny reset to make it easy for me to test
         if(Phaser.Input.Keyboard.JustDown(this.rKey)) {
             this.scene.restart();
         }

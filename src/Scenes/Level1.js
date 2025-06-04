@@ -129,7 +129,7 @@ class Level1_Outside extends Phaser.Scene {
         this.fpLayer = this.map.createLayer("Front Passables", this.tiles, 0, 0);
         // set up player avatar
         my.sprite.player = this.physics.add.sprite(this.checkpoint.x, this.checkpoint.y, "platformer_characters", "tile_0000.png");
-        my.sprite.player.setCollideWorldBounds(false);
+        //my.sprite.player.setCollideWorldBounds(false);
         
 
         // Enable collision handling

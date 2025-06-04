@@ -27,7 +27,8 @@ class Load extends Phaser.Scene {
         //Zanders past project tile map
         this.load.tilemapTiledJSON("level1", "Level1_Outside.json");   // Tilemap in JSON
 
-        // Load the tilemap as a spritesheet
+
+        // Load Tilemaps as Spritesheets
         this.load.spritesheet("bg_sheet", "tilemap-backgrounds_packed.png", {
             frameWidth: 18,
             frameHeight: 18
@@ -36,11 +37,27 @@ class Load extends Phaser.Scene {
             frameWidth: 18,
             frameHeight: 18
         });
-        this.load.spritesheet("level1-bgSheet", "bg-grasslands.png", {
+        this.load.spritesheet("level1-bgSheet", "bg_grasslands.png", {
             frameWidth: 18,
             frameHeight: 18
         }); 
         this.load.spritesheet("doubleJump_sheet", "double-jump.png", {
+            frameWidth: 18,
+            frameHeight: 18
+        });
+
+        //Volcano Loading
+        this.load.setPath("./assets/Volcano/")
+        this.load.tilemapTiledJSON("volcano", "volcano.tmj");
+        
+        this.load.image("industry_tiles", "./kenney_pixel-platformer-industrial-expansion/Tilemap/tilemap_packed.png");
+        this.load.image("generated", "./Test/Resized GenTi.png");
+        
+        this.load.spritesheet("generated_sheet", "./Test/Resized GenTi.png", {
+            frameWidth: 18,
+            frameHeight: 18
+        });
+        this.load.spritesheet("industrial_sheet", "./kenney_pixel-platformer-industrial-expansion/Tilemap/tilemap_packed.png", {
             frameWidth: 18,
             frameHeight: 18
         });

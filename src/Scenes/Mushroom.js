@@ -31,7 +31,7 @@ class Mushroom extends Phaser.Scene {
         }
         
         // Create a new tilemap game object which uses 18x18 pixel tiles, and is
-        // 45 tiles wide and 25 tiles tall.
+        // 90 tiles wide and 20 tiles tall.
         this.map = this.add.tilemap("mushroom", 18, 18, 90, 20);
        
 
@@ -54,7 +54,7 @@ class Mushroom extends Phaser.Scene {
 
         // Make it collidable
         this.groundLayer.setCollisionByProperty({
-            collision: true,
+            collision: true
         });
 
          this.mush.setCollisionByProperty({
@@ -177,6 +177,7 @@ class Mushroom extends Phaser.Scene {
         this.spawnPoint = this.map.findObject("start-end", obj => obj.name === "start");
         my.sprite.player = this.physics.add.sprite(this.spawnPoint.x, this.spawnPoint.y, "frog", "idle");
         my.sprite.player.setCollideWorldBounds(true);
+        my.sprite.player.setSize(18, 18).setOffset(1,1);
 
         // Enable collision handling
         this.physics.add.collider(my.sprite.player, this.groundLayer);

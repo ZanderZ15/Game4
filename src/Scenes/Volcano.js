@@ -55,10 +55,30 @@ class Volcano extends Phaser.Scene {
         my.sprite.player = this.physics.add.sprite(30, 270, "frog-base", "idle");
         my.sprite.player.setCollideWorldBounds(false);
         my.sprite.player.setSize(18, 18).setOffset(1,1);
+        cursors = this.input.keyboard.createCursorKeys();
+        
+        this.rKey = this.input.keyboard.addKey('R');
         
         // Enable collision handling
         this.physics.add.collider(my.sprite.player, this.groundLayer);
         
+        //Movement vfx
+        my.vfx.walking = this.add.particles(0, 0, "kenny-particles", {
+            frame: ['flame_05.png', 'flame_06.png'],
+            
+            // TODO: Try: add random: true
+            random: false, //Ranodmizes sprites shown
+            scale: {start: 0.03, end: 0.2},
+            // TODO: Try: maxAliveParticles: 8,
+            maxAliveParticles: 10, //Limits total particles
+            lifespan: 200,
+            // TODO: Try: gravityY: -400,
+            gravityY: -500, //Makes float up
+            alpha: {start: 1, end: 0.1}, 
+            frequency: 100
+        });
+        my.vfx.walking.stop();
+
         //Power Up: Speed Boost
         this.powerup = this.map.createFromObjects("Collectibles", {
             name: "speedboost",
@@ -93,8 +113,121 @@ class Volcano extends Phaser.Scene {
         this.cameras.main.setZoom(this.SCALE);
     }   
     update() {
+        //Cloud Movement
         for (let cloud of this.cloudGroup.getChildren()) {
             cloud.x += 1;
         }
+
+        //Player Movement
+        if(cursors.left.isDown) {
+            my.sprite.player.setAccelerationX(-this.ACCELERATION);
+            my.sprite.player.setFlip(true, false);
+            my.sprite.player.anims.play('hop', true);
+            // Particle Following
+            my.vfx.walking.startFollow(my.sprite.player, my.sprite.player.displayWidth/2-5, my.sprite.player.displayHeight/2-2, false);
+            my.vfx.walking.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
+            // Only play smoke effect if touching the ground
+            if (my.sprite.player.body.blocked.down) {
+                my.vfx.walking.start();
+            } else {
+                my.vfx.walking.stop();
+            }
+        } else if(cursors.right.isDown) {
+            my.sprite.player.setAccelerationX(this.ACCELERATION);
+            my.sprite.player.resetFlip();
+            my.sprite.player.anims.play('hop', true);
+            // Particle Following
+            my.vfx.walking.startFollow(my.sprite.player, my.sprite.player.displayWidth/2-20, my.sprite.player.displayHeight/2-2, false);
+            my.vfx.walking.setParticleSpeed(-this.PARTICLE_VELOCITY, 0);
+            // Only play smoke effect if touching the ground
+            if (my.sprite.player.body.blocked.down) {
+                my.vfx.walking.start();
+            } else {
+                my.vfx.walking.stop();
+            }
+        } else {
+            // Set acceleration to 0 and have DRAG take over
+            my.sprite.player.setAccelerationX(0);
+            my.sprite.player.setDragX(this.DRAG);
+            my.sprite.player.anims.play('idle');
+            //particle vfx stop
+            my.vfx.walking.stop();
+        }
+
+        
+            
+        //Cap Player's Velocity
+        let currentvx = my.sprite.player.body.velocity.x;    
+        if (currentvx > this.maxvx) {
+            my.sprite.player.setVelocityX(this.maxvx);
+        } else if (currentvx < -this.maxvx) {
+            my.sprite.player.setVelocityX(-this.maxvx);
+        }
+        let currentvy = my.sprite.player.body.velocity.y;
+        if (currentvy > 1000) {
+            my.sprite.player.setVelocityY(this.maxvy);
+        } else if (currentvy < -this.maxvy) {
+            my.sprite.player.setVelocityY(-this.maxvy);
+        }
+        // player jump
+        // note that we need body.blocked rather than body.touching b/c the former applies to tilemap tiles and the latter to the "ground"
+        if(my.sprite.player.body.blocked.down) {
+            this.jumps = true;
+            if(Phaser.Input.Keyboard.JustDown(cursors.up)) {
+                my.sprite.player.body.setVelocityY(this.JUMP_VELOCITY);
+                this.jump(my.sprite.player.body);
+            }
+        } else {
+            my.sprite.player.anims.play('jump');
+            if(Phaser.Input.Keyboard.JustDown(cursors.up) && this.jumps == true) {
+                my.sprite.player.body.setVelocityY(this.JUMP_VELOCITY);
+                this.jumps = false;
+                this.double(my.sprite.player.body);
+            }
+        }
+
+        if(Phaser.Input.Keyboard.JustDown(this.rKey)) {
+            this.scene.restart();
+        }
+    }
+    jump(sprite) {
+        this.add.particles(sprite.x+10, sprite.y+20, "kenny-particles", {
+            frame: ['circle_02.png'],
+            
+            // TODO: Try: add random: true
+            random: false, //Ranodmizes sprites shown
+            scale: {start: 0.06, end: 0.12},
+            rotaion: 0,
+            scaleX: 2,
+            scaleY: .5,
+            // TODO: Try: maxAliveParticles: 8,
+            maxAliveParticles: 1, //Limits total particles
+            lifespan: 1000,
+            // TODO: Try: gravityY: -400,
+            duration: 1000,
+            gravityY: -10, //Makes float up
+            alpha: {start: 1, end: 0.2}, 
+            repeat:0
+        });
+    }
+    double(sprite) {
+        this.add.particles(sprite.x+10, sprite.y+20, "kenny-particles", {
+            frame: ['slash_02.png'],
+            
+            // TODO: Try: add random: true
+            random: false, //Ranodmizes sprites shown
+            scale: {start: 0.06, end: 0.12},
+            rotaion: 0,
+            scaleX: .25,
+            scaleY: .5,
+            // TODO: Try: maxAliveParticles: 8,
+            maxAliveParticles: 1, //Limits total particles
+            lifespan: 500,
+            // TODO: Try: gravityY: -400,
+            duration: 500,
+            gravityY: 200, //Makes float up
+            alpha: {start: 1, end: 0.2}, 
+            repeat:0
+        });
     }
 }

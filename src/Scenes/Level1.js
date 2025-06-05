@@ -290,7 +290,7 @@ class Level1_Outside extends Phaser.Scene {
             my.sprite.player.setDragX(this.DRAG);
             my.sprite.player.anims.play('idle');
             // particle vfx stop
-             my.vfx.walking.stop();
+            my.vfx.walking.stop();
         }
 
         let currentvx = my.sprite.player.body.velocity.x;

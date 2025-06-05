@@ -5,33 +5,40 @@ class Mountain extends Phaser.Scene {
     preload() {
         this.load.tilemapTiledJSON("platformer-level-1", "assets/Mountain/platformer-level-1.tmj");
         this.load.image("tilemap_tiles", "assets/Mountain/tilemap_packed.png");
+        this.load.image("frogGlide", "assets/Mountain/frogGlide.png");
+        this.load.audio("mountainMusic", "assets/Mountain/Mountain.mp3");
+        this.load.image("volcanoBG", "assets/Volcano/images/Background.png");
     }
 
     init() {
         // variables and settings
-        this.ACCELERATION = 400;
-        this.DRAG = 1000;    // DRAG < ACCELERATION = icy slide
-        this.physics.world.gravity.y = 1500;
-        this.JUMP_VELOCITY = -600;
-        this.MAX_VELOCITY = 300;
+        this.MAX_VELOCITY = 400;
         this.PARTICLE_VELOCITY = 50;
         this.SCALE = config.width / 720;
         this.onLadderNow = false;
 
         this.ACCELERATION = 400;
         this.DRAG = 1000;    // DRAG < ACCELERATION = icy slide
-        this.physics.world.gravity.y = 1500;
-        this.JUMP_VELOCITY = -600;
+        this.physics.world.gravity.y = 200;
+        this.JUMP_VELOCITY = -150;
         this.PARTICLE_VELOCITY = 50;
         this.elaspedTime = 0;
         this.timerActive = false;
     }
 
     create() {
+        this.sound.add("mountainMusic", {
+            loop: true,
+            volume: 0.5   // Optional: set volume from 0.0 to 1.0
+        }).play();
+
+
+        this.add.image(0, 500, "volcanoBG").setOrigin(0);
+
         // Create a new tilemap game object which uses 18x18 pixel tiles, and is
         // 144 tiles wide and 25 tiles tall.
         
-        this.map = this.add.tilemap("platformer-level-1", 18, 18, 144, 25);
+        this.map = this.add.tilemap("platformer-level-1", 18, 18, 144, 144);
 
         // Add a tileset to the map
         // First parameter: name we gave the tileset in Tiled
@@ -51,7 +58,7 @@ class Mountain extends Phaser.Scene {
 
         // Add button layer (e.g. floor switches)
         this.buttonLayer = this.map.createLayer("Button", this.tileset, 0, 0);
-        this.shipLayer = this.map.createLayer("Ship", this.tileset, 0, 0);
+        this.flagLayer = this.map.createLayer("Flag", this.tileset, 0, 0);
         this.coinLayer = this.map.createLayer("Coins", this.tileset, 0, 0);
 
         this.groundLayer = this.map.createLayer("Ground-n-Platforms", this.tileset, 0, 0);
@@ -70,7 +77,7 @@ class Mountain extends Phaser.Scene {
         this.buttonLayer.setCollisionByProperty({ isButton: true });
         this.ladderLayer.setCollisionByProperty({ isLadder: true }); 
         this.coinLayer.setCollisionByProperty({ isCoin: true }); 
-        this.shipLayer.setCollisionByProperty({ isShip: true });
+        this.flagLayer.setCollisionByProperty({ isFlag: true });
 
         // Start invisible and not collidable
         this.bluePlatformLayer.setVisible(false);
@@ -79,7 +86,9 @@ class Mountain extends Phaser.Scene {
         
 
         // set up player avatar
-        my.sprite.player = this.physics.add.sprite(30, 200, "platformer_characters", "tile_0000.png");
+        my.sprite.player = this.physics.add.sprite(30, 2450, "platformer_characters", "tile_0000.png");
+        my.sprite.player.body.setSize(12, 12);
+        my.sprite.player.body.setOffset(5, 5);
         // my.sprite.player.setCollideWorldBounds(true);
 
         // Enable collision handling
@@ -113,23 +122,6 @@ class Mountain extends Phaser.Scene {
         my.vfx.walking.stop();
 
         this.sprite = {};
-
-        this.sprite.crate = this.physics.add.sprite(265, 170, "platformer_characters", "tile_0011.png");
-        this.sprite.crate.setImmovable(false);         // Allow it to be pushed
-        this.sprite.crate.setCollideWorldBounds(true); // Stop it from falling off-screen
-        this.sprite.crate.body.setBounce(0);           // No bounce
-        this.sprite.crate.body.setFriction(20, 20); 
-        this.sprite.crate.body.setDrag(400, 400);         // Horizontal drag
-        this.sprite.crate.body.setMass(2);
-
-        this.physics.add.collider(my.sprite.player, this.sprite.crate, (player, crate) => {
-            if (!player.body.blocked.down) {
-                crate.setVelocityX(0); // prevent midair pushing
-            }
-        });
-
-        this.physics.add.collider(my.sprite.player, this.sprite.crate);
-        this.physics.add.collider(this.sprite.crate, this.groundLayer);
         
 
         // TODO: add camera code here
@@ -145,17 +137,6 @@ class Mountain extends Phaser.Scene {
         this.coinLayer.removeTileAt(tile.x, tile.y);
         // Optional: play sound, increment score, animate, etc.
         console.log("coin collected");
-        return false; // Return false to stop collision from happening again
-    }
-
-    collectShip(player, tile) {
-        this.shipLayer.removeTileAt(tile.x, tile.y);
-        // Optional: play sound, increment score, animate, etc.
-        this.shipPieces += 1;
-        console.log("ship piece collected");
-        if (this.shipPieces >= 3) {
-            this.scene.start('EndScene'); // Switch to EndScene
-        }
         return false; // Return false to stop collision from happening again
     }
 
@@ -196,19 +177,18 @@ class Mountain extends Phaser.Scene {
             this.collectCoin(my.sprite.player, coinTile);
         }
 
-        let shipTile = this.shipLayer.getTileAtWorldXY(
+        let flagTile = this.flagLayer.getTileAtWorldXY(
             my.sprite.player.x,
-            my.sprite.player.y,
+            my.sprite.player.y + my.sprite.player.height / 2,
             true
         );
-
-        if (shipTile && shipTile.properties.isShip) {
-            this.collectShip(my.sprite.player, shipTile);
+        
+        if (flagTile && flagTile.properties.isFlag) {
+            this.scene.start("volcano"); // change to your actual volcano scene key
         }
 
 
         let playerBottom = my.sprite.player.body.y + my.sprite.player.body.height;
-        let boxBottom = this.sprite.crate.body.y + this.sprite.crate.body.height;
 
         let playerTile = this.buttonLayer.getTileAtWorldXY(
             my.sprite.player.x,
@@ -216,17 +196,10 @@ class Mountain extends Phaser.Scene {
             true
         );
 
-        let boxTile = this.buttonLayer.getTileAtWorldXY(
-            this.sprite.crate.x,
-            boxBottom - 1,
-            true
-        );
-
         let isButtonPressed = false;
 
         // If either object is on a button, set to true
-        if ((playerTile && playerTile.properties.isButton) || 
-            (boxTile && boxTile.properties.isButton)) {
+        if (playerTile && playerTile.properties.isButton) {
             isButtonPressed = true;
         }
 
@@ -238,28 +211,14 @@ class Mountain extends Phaser.Scene {
             if (!this.bluePlatformCollider) {
                 this.bluePlatformCollider = this.physics.add.collider(my.sprite.player, this.bluePlatformLayer);
             }
-        } else {
-            this.bluePlatformLayer.setVisible(false);
-            this.bluePlatformLayer.setCollisionByProperty({ bluePlatform: false });
-
-            // Optionally remove collider (optional for performance)
-            if (this.bluePlatformCollider) {
-                this.physics.world.removeCollider(this.bluePlatformCollider);
-                this.bluePlatformCollider = null;
-            }
         }
 
 
-
         //if player falls into void
-        if (my.sprite.player.y > 600) { // Adjust 600 depending on how deep the void is
+        if (my.sprite.player.y > 2650) { // Adjust 600 depending on how deep the void is
             my.sprite.player.setVelocity(0, 0);
             my.sprite.player.setAcceleration(0, 0);  
-            my.sprite.player.setPosition(30, 200);
-            this.playerHealth -= 1;
-            if (this.playerHealth <= 0) {
-                this.scene.start('EndScene');
-            }
+            my.sprite.player.setPosition(30, 2500);
         }
 
 
@@ -275,9 +234,8 @@ class Mountain extends Phaser.Scene {
             } else {
                 my.sprite.player.setAccelerationX(0);
             }
-
-            my.sprite.player.resetFlip();
-            my.sprite.player.anims.play('walk', true);
+            my.sprite.player.setFlip(true, false);
+            my.sprite.player.anims.play('hop', true);
 
             // Particle effect setup
             my.vfx.walking.startFollow(
@@ -303,8 +261,8 @@ class Mountain extends Phaser.Scene {
                 my.sprite.player.setAccelerationX(0);
             }
 
-            my.sprite.player.setFlip(true, false);
-            my.sprite.player.anims.play('walk', true);
+            my.sprite.player.resetFlip();
+            my.sprite.player.anims.play('hop', true);
 
             // Particle effect setup
             my.vfx.walking.startFollow(
@@ -334,6 +292,13 @@ class Mountain extends Phaser.Scene {
         }
         if(my.sprite.player.body.blocked.down && Phaser.Input.Keyboard.JustDown(cursors.up)) {
             my.sprite.player.body.setVelocityY(this.JUMP_VELOCITY);
+
+        } else {
+            // If airborne, use frogGlide
+            if (my.sprite.player.texture.key !== "frogGlide") {
+                my.sprite.player.setTexture("frogGlide");
+            }
+            my.sprite.player.anims.stop(); // stop any running animation
         }
 
         if(Phaser.Input.Keyboard.JustDown(this.rKey)) {

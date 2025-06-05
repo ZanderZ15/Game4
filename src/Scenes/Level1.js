@@ -25,7 +25,7 @@ class Level1_Outside extends Phaser.Scene {
     }
     create() {
         
-        this.map = this.add.tilemap("level1", 18, 18, 450, 50);
+        this.map = this.add.tilemap("level1", 18, 18, 144, 144);
 
 
         this.animatedTiles.init(this.map);

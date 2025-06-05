@@ -14,7 +14,7 @@ class Select extends Phaser.Scene {
             fontFamily: '"Press Start 2P"'
         }).setOrigin(.5, 0).setTint(0xffffff);
 
-        this.add.text(width/2, 180, "Level 1 DOUBLE JUMP WOOHOOO, Level 2 DASH ZOOM, Level 3 SPEEEDD BOOTSS!", {
+        this.add.text(width/2, 180, "Level 1 DOUBLE JUMP WOOHOOO, Level 2 GLIDE ZOOM, Level 3 SPEEEDD BOOTSS!", {
             fontSize: '20px',
             fill: '#ffffff',
             fontFamily: '"Press Start 2P"'

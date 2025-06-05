@@ -11,7 +11,7 @@ class Load extends Phaser.Scene {
         this.load.atlas("frog-base", "./Characters/FrogNPC.png", "./Characters/FrogNPC.json"); 
 
         //Text
-        this.load.bitmapFont("rocketSquare", "./Text/KennyRocketSquare_0.png", "./Text/KennyRocketSquare.fnt");
+        this.load.bitmapFont("blocky", "./Text/pixel.png", "./Text/pixel.fnt");
         
         // Load tilemap information
         this.load.image("tiles", "tilemap_packed.png");

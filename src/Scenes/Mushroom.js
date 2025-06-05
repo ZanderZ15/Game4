@@ -209,10 +209,10 @@ class Mushroom extends Phaser.Scene {
         });
 
         this.physics.add.overlap(my.sprite.player, this.waterGroup, (obj1, obj2) => {
-            my.sprite.player.body.setVelocityX(0);
-            my.sprite.player.body.setVelocityY(0);
-            obj1.x = this.spawnPoint.x; 
-            obj1.y = this.spawnPoint.y - 10;
+            this.cameras.main.fadeOut(250, 0, 0, 0);
+            this.cameras.main.once('camerafadeoutcomplete', () => {
+            this.scene.restart();
+            });
         });
 
         //TODO: make a collision handle for when you pick up the power up activate double jump

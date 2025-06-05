@@ -5,11 +5,27 @@ class Title extends Phaser.Scene {
     }
     create() {
         let my = this.my;
-        
-        const width = 1520
-        my.text.wt = this.add.bitmapText(width/2, 120, "rocketSquare", "Leap!").setOrigin(.5, 0); 
-        my.text.ze = this.add.bitmapText(width/2, 180, "rocketSquare", "Frog?").setOrigin(.5, 0);
-        my.text.ptp = this.add.bitmapText(width/2, 520, "rocketSquare", "Press SPACE to play").setOrigin(.5, 0);
+
+        const width = 1520;
+
+        this.add.text(width/2, 120, "Leap!", {
+            fontSize: '40px',
+            fill: '#ffffff',
+            fontFamily: '"Press Start 2P"'
+        }).setOrigin(.5, 0).setTint(0xffffff);
+
+        this.add.text(width/2, 180, "Frog?", {
+            fontSize: '40px',
+            fill: '#ffffff',
+            fontFamily: '"Press Start 2P"'
+        }).setOrigin(.5, 0).setTint(0xffffff);
+
+        this.add.text(width/2, 520, "Press SPACE to Play!", {
+            fontSize: '40px',
+            fill: '#ffffff',
+            fontFamily: '"Press Start 2P"'
+        }).setOrigin(.5, 0).setTint(0xffffff);
+
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.zeroKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ZERO);
         this.mKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);

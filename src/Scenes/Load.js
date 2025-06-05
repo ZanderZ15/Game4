@@ -9,9 +9,6 @@ class Load extends Phaser.Scene {
 
         // Load mr.froggy spritesheet
         this.load.atlas("frog-base", "./Characters/FrogNPC.png", "./Characters/FrogNPC.json"); 
-
-        //Text
-        this.load.bitmapFont("rocketSquare", "./Text/KennyRocketSquare_0.png", "./Text/KennyRocketSquare.fnt");
         
         // Load tilemap information
         this.load.image("tiles", "tilemap_packed.png");
@@ -75,6 +72,9 @@ class Load extends Phaser.Scene {
         //load in audio
         this.load.audio("coinBoing", "/Audio/jingles_SAX04.ogg");
         this.load.audio("backgroundMush", "/Audio/best-game-console-301284.mp3");
+        this.load.audio("powerUpAudio", "/Audio/jingles_NES12.ogg"); 
+        this.load.audio("boing", "/Audio/drop_003.ogg");
+        this.load.audio("death", "/Audio/jingles_NES11.ogg"); 
 
         
     }

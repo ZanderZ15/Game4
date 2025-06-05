@@ -8,25 +8,30 @@ class Mushroom extends Phaser.Scene {
         this.ACCELERATION = 400;
         this.DRAG = 1000;    // DRAG < ACCELERATION = icy slide
         this.physics.world.gravity.y = 1500;
-        this.JUMP_VELOCITY = -600;
+        this.JUMP_VELOCITY = -500;
         this.PARTICLE_VELOCITY = 50;
         this.SCALE = config.width / 720;
         this.coinsCollected = 0;
         this.amountOfCoins = 30; 
         this.jumps = false;
         this.powerUp = false; 
+        this.maxvx = 300;
+        this.maxvy = 1000;
     }
 
     create() 
     {
         //Load in sounds
-        this.coinSound = this.sound.add("coinBoing");
+        this.coinSound = this.sound.add("coinBoing", {volume: 0.3});
+        this.powerUpSound = this.sound.add("powerUpAudio", {volume: 0.2}); 
+        this.boingSound = this.sound.add("boing", {volume: 0.3});
+        this.deathSound = this.sound.add("death", {volume: 0.2});
 
         //load in background music
     
         if(!this.sound.get("backgroundMush"))
         {
-            this.backGroundMusic = this.sound.add("backgroundMush", {loop: true, volume: 0.5});
+            this.backGroundMusic = this.sound.add("backgroundMush", {loop: true, volume: 0.2});
             this.backGroundMusic.play();
         }
         
@@ -206,16 +211,18 @@ class Mushroom extends Phaser.Scene {
         });
 
         this.physics.add.overlap(my.sprite.player, this.waterGroup, (obj1, obj2) => {
-            my.sprite.player.body.setVelocityX(0);
-            my.sprite.player.body.setVelocityY(0);
-            obj1.x = this.spawnPoint.x; 
-            obj1.y = this.spawnPoint.y - 10;
+            this.deathSound.play();
+            this.cameras.main.fadeOut(250, 0, 0, 0);
+            this.cameras.main.once('camerafadeoutcomplete', () => {
+            this.scene.restart();
+            });
         });
 
         //TODO: make a collision handle for when you pick up the power up activate double jump
         this.physics.add.overlap(my.sprite.player, this.powerUpGroup, (obj1, obj2) => { 
             obj2.destroy(); // remove powerUP on overlap
             this.powerUp = true; 
+            this.powerUpSound.play(); 
             
         });
 
@@ -265,7 +272,21 @@ class Mushroom extends Phaser.Scene {
         });
         my.vfx.walking.stop();
 
-        //TODO: Add a jump VFX
+        //Add a jump VFX
+        my.vfx.jumping = this.add.particles(0, 0, "kenny-particles", {
+            frame: ['slash_02.png'],
+            random: false, //Ranodmizes sprites shown
+            scale: {start: 0.06, end: 0.12},
+            rotaion: 0,
+            scaleX: .25,
+            scaleY: .5,
+            maxAliveParticles: 1, //Limits total particles
+            lifespan: 500,
+            duration: 500,
+            gravityY: 0, //Makes float up
+            alpha: {start: 1, end: 0.2}, 
+            repeat:0
+        });
 
         //camera code here
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
@@ -333,6 +354,25 @@ class Mushroom extends Phaser.Scene {
             my.vfx.walking.stop();
         }
 
+    
+        
+        // Cap the velocity
+        let currentvx = my.sprite.player.body.velocity.x;
+        if (currentvx > this.maxvx) {
+            my.sprite.player.setVelocityX(this.maxvx);
+        } 
+        else if (currentvx < -this.maxvx) {
+            my.sprite.player.setVelocityX(-this.maxvx);
+        }
+        let currentvy = my.sprite.player.body.velocity.y;
+        
+        if (currentvy > 1000) {
+            my.sprite.player.setVelocityY(this.maxvy);
+        } 
+        else if (currentvy < -this.maxvy) {
+            my.sprite.player.setVelocityY(-this.maxvy);
+        }
+
         // player jump
         // note that we need body.blocked rather than body.touching b/c the former applies to tilemap tiles and the latter to the "ground"
         if(!my.sprite.player.body.blocked.down) {
@@ -343,14 +383,16 @@ class Mushroom extends Phaser.Scene {
             if(Phaser.Input.Keyboard.JustDown(cursors.up)) {
                 my.sprite.player.body.setVelocityY(this.JUMP_VELOCITY);
                 my.sprite.player.anims.play('jump');
-                //this.jump(my.sprite.player.body); this is for vfx I have yet to impliment
+                my.vfx.jumping.explode(10, my.sprite.player.x, my.sprite.player.y + my.sprite.player.height / 2);
+                this.boingSound.play();
             }
         } else {
             //my.sprite.player.anims.play('jump');
             if(Phaser.Input.Keyboard.JustDown(cursors.up) && this.jumps == true && this.powerUp == true) {
                 my.sprite.player.body.setVelocityY(this.JUMP_VELOCITY);
                 this.jumps = false;
-                //this.double(my.sprite.player.body); this is for vfx i have yet to impliment
+                my.vfx.jumping.explode(10, my.sprite.player.x, my.sprite.player.y + my.sprite.player.height / 2);
+                this.boingSound.play(); 
             }
         }
        

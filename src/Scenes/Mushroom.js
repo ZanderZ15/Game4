@@ -24,6 +24,7 @@ class Mushroom extends Phaser.Scene {
         //Load in sounds
         this.coinSound = this.sound.add("coinBoing", {volume: 0.3});
         this.powerUpSound = this.sound.add("powerUpAudio", {volume: 0.2}); 
+        this.boingSound = this.sound.add("boing", {volume: 0.3});
 
         //load in background music
     
@@ -381,13 +382,15 @@ class Mushroom extends Phaser.Scene {
                 my.sprite.player.body.setVelocityY(this.JUMP_VELOCITY);
                 my.sprite.player.anims.play('jump');
                 my.vfx.jumping.explode(10, my.sprite.player.x, my.sprite.player.y + my.sprite.player.height / 2);
+                this.boingSound.play();
             }
         } else {
             //my.sprite.player.anims.play('jump');
             if(Phaser.Input.Keyboard.JustDown(cursors.up) && this.jumps == true && this.powerUp == true) {
                 my.sprite.player.body.setVelocityY(this.JUMP_VELOCITY);
                 this.jumps = false;
-                my.vfx.jumping.explode(10, my.sprite.player.x, my.sprite.player.y + my.sprite.player.height / 2); 
+                my.vfx.jumping.explode(10, my.sprite.player.x, my.sprite.player.y + my.sprite.player.height / 2);
+                this.boingSound.play(); 
             }
         }
        

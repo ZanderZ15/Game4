@@ -7,10 +7,30 @@ class Select extends Phaser.Scene {
         let my = this.my;
         
         const width = 1520
-        my.text.a = this.add.bitmapText(width/2, 120, "rocketSquare", "Press Space to go to \"Level1\"").setOrigin(.5, 0); 
-        my.text.b = this.add.bitmapText(width/2, 160, "rocketSquare", "Press M to go to \"mountains\"").setOrigin(.5, 0);
-        my.text.c = this.add.bitmapText(width/2, 200, "rocketSquare", "Press N to go to \"Mushrooms\"").setOrigin(.5, 0);
-        my.text.d = this.add.bitmapText(width/2, 240, "rocketSquare", "Press 0 to go to \"volcano\"").setOrigin(.5, 0);
+
+         this.add.text(width/2, 120, "Make sure you grab your Power Up! (It'll help you beat the level)", {
+            fontSize: '20px',
+            fill: '#ffffff',
+            fontFamily: '"Press Start 2P"'
+        }).setOrigin(.5, 0).setTint(0xffffff);
+
+        this.add.text(width/2, 180, "Level 1 DOUBLE JUMP WOOHOOO, Level 2 DASH ZOOM, Level 3 SPEEEDD BOOTSS!", {
+            fontSize: '20px',
+            fill: '#ffffff',
+            fontFamily: '"Press Start 2P"'
+        }).setOrigin(.5, 0).setTint(0xffffff);
+
+        this.add.text(width/2, 240, "Collect all the coins to continue past the checkpoint!", {
+            fontSize: '20px',
+            fill: '#ffffff',
+            fontFamily: '"Press Start 2P"'
+        }).setOrigin(.5, 0).setTint(0xffffff);
+
+        this.add.text(width/2, 520, "Press SPACE to START!", {
+            fontSize: '40px',
+            fill: '#ffffff',
+            fontFamily: '"Press Start 2P"'
+        }).setOrigin(.5, 0).setTint(0xffffff);
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.zeroKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ZERO);
         this.mKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
@@ -18,13 +38,13 @@ class Select extends Phaser.Scene {
     }
     update() {
         if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
-            this.scene.start("level1");
+            this.scene.start("mushroomlevel");
         }
         if (Phaser.Input.Keyboard.JustDown(this.mKey)) {
             this.scene.start("mountain");
         }
         if (Phaser.Input.Keyboard.JustDown(this.nKey)) {
-            this.scene.start("mushroomlevel");
+            this.scene.start("level1");
         }
         if (Phaser.Input.Keyboard.JustDown(this.zeroKey)) {
             this.scene.start("volcano");

@@ -51,10 +51,9 @@ class Level1_Outside extends Phaser.Scene {
         this.platLayer.setCollisionByProperty({
             oneWay: true
         });
-        //this.solidLayer.setCollision([5]);
-
-        // Adjust collision behavior for platforms to be passable from below
         
+
+        // Adjust collision for platforms
         this.platLayer.forEachTile(tile => {
             
             const tileProperties = this.map.tilesets[0].tileProperties[tile.index];

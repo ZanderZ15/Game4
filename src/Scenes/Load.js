@@ -52,6 +52,7 @@ class Load extends Phaser.Scene {
         
         this.load.image("industry_tiles", "./kenney_pixel-platformer-industrial-expansion/Tilemap/tilemap_packed.png");
         this.load.image("generated", "./Test/Resized GenTi.png");
+        this.load.image("spd_tiles", "speed_boost.png");
         
         this.load.spritesheet("generated_sheet", "./Test/Resized GenTi.png", {
             frameWidth: 18,

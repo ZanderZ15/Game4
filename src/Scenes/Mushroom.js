@@ -25,6 +25,7 @@ class Mushroom extends Phaser.Scene {
         this.coinSound = this.sound.add("coinBoing", {volume: 0.3});
         this.powerUpSound = this.sound.add("powerUpAudio", {volume: 0.2}); 
         this.boingSound = this.sound.add("boing", {volume: 0.3});
+        this.deathSound = this.sound.add("death", {volume: 0.2});
 
         //load in background music
     
@@ -210,6 +211,7 @@ class Mushroom extends Phaser.Scene {
         });
 
         this.physics.add.overlap(my.sprite.player, this.waterGroup, (obj1, obj2) => {
+            this.deathSound.play();
             this.cameras.main.fadeOut(250, 0, 0, 0);
             this.cameras.main.once('camerafadeoutcomplete', () => {
             this.scene.restart();

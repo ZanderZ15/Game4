@@ -171,20 +171,24 @@ class Volcano extends Phaser.Scene {
         }
         // player jump
         // note that we need body.blocked rather than body.touching b/c the former applies to tilemap tiles and the latter to the "ground"
-        if(my.sprite.player.body.blocked.down) {
-            this.jumps = true;
-            if(Phaser.Input.Keyboard.JustDown(cursors.up)) {
-                my.sprite.player.body.setVelocityY(this.JUMP_VELOCITY);
-                this.jump(my.sprite.player.body);
+        if(my.sprite.player.body.blocked.down) { //Check if the player is touching the ground
+            this.jumps = true; //If they have then "reset" their double jump
+            if(Phaser.Input.Keyboard.JustDown(cursors.up)) { //Checks if the jump button, 
+            // in this case "up" has been pressed
+                my.sprite.player.body.setVelocityY(this.JUMP_VELOCITY); //Makes the player "jump"
+                this.jump(my.sprite.player.body); //This plays a jump particle (for juciness)
             }
-        } else {
-            my.sprite.player.anims.play('jump');
-            if(Phaser.Input.Keyboard.JustDown(cursors.up) && this.jumps == true) {
-                my.sprite.player.body.setVelocityY(this.JUMP_VELOCITY);
-                this.jumps = false;
-                this.double(my.sprite.player.body);
+        } else { //Checks if the player is not touching the ground
+            my.sprite.player.anims.play('jump'); //Plays the player's jump animation when 
+            // they are not touching the ground
+            if(Phaser.Input.Keyboard.JustDown(cursors.up) && this.jumps == true) { //Checks if
+                //the player has their double jump if they are not touching the ground and press "jump"
+                my.sprite.player.body.setVelocityY(this.JUMP_VELOCITY); //If so, jumps like above
+                this.jumps = false; // "uses" the double jump
+                this.double(my.sprite.player.body); //plays an alternate particle effect (more juice)
             }
         }
+        //Could be altered so that the jump is an integer and the player could have multiple extra jumps
 
         if(Phaser.Input.Keyboard.JustDown(this.rKey)) {
             this.scene.restart();

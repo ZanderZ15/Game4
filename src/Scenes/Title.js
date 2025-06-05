@@ -7,7 +7,7 @@ class Title extends Phaser.Scene {
         let my = this.my;
 
         const width = 1520;
-
+        
         this.add.text(width/2, 120, "Leap!", {
             fontSize: '40px',
             fill: '#ffffff',

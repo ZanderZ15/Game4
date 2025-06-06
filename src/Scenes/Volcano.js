@@ -19,6 +19,8 @@ class Volcano extends Phaser.Scene {
             x: 30,
             y: 500
         };
+        this.cloud_counter = 0;
+        this.cloud_velocity = 1.5;
     }
     preload() {
         this.load.image("volcanoBG", "assets/Volcano/images/Background.png");
@@ -27,6 +29,9 @@ class Volcano extends Phaser.Scene {
     create() {
         //BG
         this.add.image(0, -800, "volcanoBG").setOrigin(0);
+        this.add.image(3380, -800, "volcanoBG").setOrigin(0);
+        
+        
         //Map
         this.map = this.add.tilemap("volcano", 18, 18, 100, 20);
         
@@ -34,7 +39,7 @@ class Volcano extends Phaser.Scene {
         this.g_tiles = this.map.addTilesetImage("g1", "generated");
         this.spd_tiles = this.map.addTilesetImage("speedboost", "spd_tiles");
         
-        this.deathLayer = this.map.createLayer("Death", this.g_tiles, 0, 0);
+        this.lavaLayer = this.map.createLayer("Lava", this.g_tiles, 0, 0);
         this.groundLayer = this.map.createLayer("Ground", this.g_tiles, 0, 0);
         this.pLayer = this.map.createLayer("Passables", this.i_tiles, 0, 0);
 
@@ -45,11 +50,7 @@ class Volcano extends Phaser.Scene {
         this.groundLayer.setCollisionByProperty({
             collides: true
         });
-        /*
-        this.platLayer.setCollisionByProperty({
-            oneWay: true
-        });
-        */
+
 
         //Player
         my.sprite.player = this.physics.add.sprite(30, 270, "frog-base", "idle");
@@ -59,8 +60,10 @@ class Volcano extends Phaser.Scene {
         
         this.rKey = this.input.keyboard.addKey('R');
         
+
         // Enable collision handling
         this.physics.add.collider(my.sprite.player, this.groundLayer);
+        
         
         //Movement vfx
         my.vfx.walking = this.add.particles(0, 0, "kenny-particles", {
@@ -80,44 +83,74 @@ class Volcano extends Phaser.Scene {
         my.vfx.walking.stop();
 
         //Power Up: Speed Boost
-        this.powerup = this.map.createFromObjects("Collectibles", {
+        this.powerups = this.map.createFromObjects("Collectibles", {
             name: "speedboost",
-            key: "spd_tiles",
+            key: "spd_sheet",
             frame: 0
         });
         this.anims.create({
-            key: 'speedboost', // Animation key
-            frames: this.anims.generateFrameNumbers('spd_tiles', 
+            key: 'speedboost_anim', // Animation key
+            frames: this.anims.generateFrameNumbers('spd_sheet', 
                 {start: 0, end: 1}
             ),
             frameRate: 1,  // Higher is faster
             repeat: -1      // Loop the animation indefinitely
         });
-        this.physics.world.enable(this.powerup, Phaser.Physics.Arcade.STATIC_BODY);
-        this.powerupGroup = this.add.group(this.powerup);
+        this.anims.play("speedboost_anim", this.powerups);
+        this.physics.world.enable(this.powerups, Phaser.Physics.Arcade.STATIC_BODY);
+        this.powerupGroup = this.add.group(this.powerups);
         
         //Death Clouds
         this.clouds = this.map.createFromObjects("Death Cloud", {
             name: "cloud",
-            key: "I1",
+            key: "industrial_sheet",
             frame: 42
         });
         this.physics.world.enable(this.clouds, Phaser.Physics.Arcade.STATIC_BODY);
         this.cloudGroup = this.add.group(this.clouds);
+        for (let cloud of this.cloudGroup.getChildren()) {
+            cloud.visible = true;
+        }
+        this.physics.add.overlap(my.sprite.player, this.cloudGroup, (obj1, obj2) => { 
+            console.log("NE");
+            this.scene.restart();
+        });
 
+        //End
+        this.end = this.map.createFromObjects("Collectibles", {
+            name: "end",
+            key: "industrial_sheet",
+            frame: 73
+        });
+        this.physics.world.enable(this.end, Phaser.Physics.Arcade.STATIC_BODY);
+        this.endGroup = this.add.group(this.end);
         
         // Camera
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         this.cameras.main.startFollow(my.sprite.player, true, 0.25, 0.25); // (target, [,roundPixels][,lerpX][,lerpY])
         this.cameras.main.setDeadzone(50, 50);
         this.cameras.main.setZoom(this.SCALE);
+        
+        
+        
     }   
     update() {
-        //Cloud Movement
+        //Cloud Movement pt1
         for (let cloud of this.cloudGroup.getChildren()) {
-            cloud.x += 1;
+            cloud.x += this.cloud_velocity;
+            cloud.body.updateFromGameObject(); // Synchronize the physics body
         }
 
+
+        //Cloud movement pt2
+        if (my.sprite.player.body.x >= 2160) {
+            for (let cloud of this.cloudGroup.getChildren()) {
+                this.cloud_velocity = 5;
+            }
+        }
+        //Cloud Particles
+        this.cloud_counter ++;
+        
         //Player Movement
         if(cursors.left.isDown) {
             my.sprite.player.setAccelerationX(-this.ACCELERATION);
@@ -154,8 +187,6 @@ class Volcano extends Phaser.Scene {
             my.vfx.walking.stop();
         }
 
-        
-            
         //Cap Player's Velocity
         let currentvx = my.sprite.player.body.velocity.x;    
         if (currentvx > this.maxvx) {
@@ -190,7 +221,11 @@ class Volcano extends Phaser.Scene {
         }
         //Could be altered so that the jump is an integer and the player could have multiple extra jumps
 
+        //Restarts
         if(Phaser.Input.Keyboard.JustDown(this.rKey)) {
+            this.scene.restart();
+        }
+        if (my.sprite.player.y < 0) {
             this.scene.restart();
         }
     }

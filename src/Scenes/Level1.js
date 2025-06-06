@@ -53,16 +53,7 @@ class Level1_Outside extends Phaser.Scene {
         });
         
 
-        // Adjust collision for platforms
-        this.platLayer.forEachTile(tile => {
-            
-            const tileProperties = this.map.tilesets[0].tileProperties[tile.index];
-            
-            if (tileProperties && tileProperties.oneWay) {
-                
-                tile.setCollision(false, false, true, false); // Only collides on top
-            }
-        });
+        
 
         this.coins = this.map.createFromObjects("Collectibles", {
             name: "coin",

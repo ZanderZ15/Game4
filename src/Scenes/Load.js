@@ -59,6 +59,10 @@ class Load extends Phaser.Scene {
             frameWidth: 18,
             frameHeight: 18
         });
+        this.load.spritesheet("spd_sheet", "speed_boost.png", {
+            frameWidth: 18,
+            frameHeight: 18
+        });
         
         //load in kennies particles and such
         this.load.setPath("./assets/Particles/");

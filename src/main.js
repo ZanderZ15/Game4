@@ -36,7 +36,7 @@ let config = {
     },
     width: 1520,
     height: 670,
-    scene: [Load, Title, Select, Level1_Outside, Volcano, Mountain, Mushroom],
+    scene: [Load, Title, Select, Level1_Outside, Volcano, Mountain, Mushroom, End],
 
     plugins: {
         scene: [

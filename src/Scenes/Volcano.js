@@ -28,6 +28,13 @@ class Volcano extends Phaser.Scene {
         this.load.scenePlugin('AnimatedTiles', './lib/AnimatedTiles.js', 'animatedTiles', 'animatedTiles');
     }
     create() {
+        //Music
+        if(!this.sound.get("volcano_noise"))
+        {
+            this.backGroundMusic = this.sound.add("volcano_noise", {loop: true, volume: 0.2});
+            this.backGroundMusic.play();
+        }
+        
         //BG
         this.add.image(0, -800, "volcanoBG").setOrigin(0);
         this.add.image(3380, -800, "volcanoBG").setOrigin(0);
@@ -60,6 +67,7 @@ class Volcano extends Phaser.Scene {
         cursors = this.input.keyboard.createCursorKeys();
         
         this.rKey = this.input.keyboard.addKey('R');
+        this.zeroKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ZERO);
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         
 
@@ -144,7 +152,7 @@ class Volcano extends Phaser.Scene {
 
         //Cloud Collision logic
         this.physics.add.overlap(my.sprite.player, this.cloudGroup, (obj1, obj2) => { 
-            //this.scene.restart();
+            this.scene.restart();
         });
 
 
@@ -156,6 +164,20 @@ class Volcano extends Phaser.Scene {
         });
         this.physics.world.enable(this.end, Phaser.Physics.Arcade.STATIC_BODY);
         this.endGroup = this.add.group(this.end);
+
+
+        //End Collision
+        this.physics.add.overlap(my.sprite.player, this.endGroup, (obj1, obj2) => { 
+            if(this.sound.get("volcano_noise"))
+                    {
+                        this.backGroundMusic.destroy();
+                    }
+                    this.scene.stop("volcano");
+            this.scene.start("end");
+        });
+
+        //Straight to end
+        this.mKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
         
 
         //Lava
@@ -307,11 +329,13 @@ class Volcano extends Phaser.Scene {
         //Player Boost
         if(Phaser.Input.Keyboard.JustDown(this.spaceKey) && this.boost) {
             this.ACCELERATION *= 2;
+            this.maxvx *= 2;
             this.boostactive = true;
         }
         if (Phaser.Input.Keyboard.JustUp(this.spaceKey) && this.boost) {
             this.ACCELERATION *= .5;
             this.boostactive = false;
+            this.maxvx *= .5;
         }
         //Restarts
         if(Phaser.Input.Keyboard.JustDown(this.rKey)) {
@@ -320,6 +344,17 @@ class Volcano extends Phaser.Scene {
         if (my.sprite.player.y > 400) {
             this.scene.restart();
         }
+        if (Phaser.Input.Keyboard.JustDown(this.mKey)) {
+            if(this.sound.get("volcano_noise"))
+                    {
+                        this.backGroundMusic.destroy();
+                    }
+                    this.scene.stop("volcano");
+            this.scene.start("end");
+        }
+
+
+        
     }
     jump(sprite) {
         this.add.particles(sprite.x+10, sprite.y+20, "kenny-particles", {
@@ -363,21 +398,22 @@ class Volcano extends Phaser.Scene {
     }
     //DeathClouds vfx (place them 20px in front)
     dc(body) {
-        this.add.particles(body.x + 20, body.y, "kenny-particles", {
+        const emitter = this.add.particles(body.x + 70, body.y, "kenny-particles", {
             frame: ['smoke_03.png', 'smoke_07.png', 'smoke_08.png', 'spark_01.png', 'spark_02.png'],
             // TODO: Try: add random: true
             random: true, //Ranodmizes sprites shown
             scale: {start: 0.03, end: 0.2},
             // TODO: Try: maxAliveParticles: 8,
             maxAliveParticles: 10, //Limits total particles
-            lifespan: 500,
+            lifespan: 800,
             // TODO: Try: gravityY: -400,
             gravityY: 0, //Makes float up
-            alpha: {start: 0.1, end: 1}, 
-            frequency: 500,
-            repeat: 0,
+            alpha: {start: 0.1, end: .5}, 
+            frequency: 400,
+            duration: 7000,
             blendMode: 'ADD',
-            tint: { start: 0xff0000, end: 0x0000ff}
+            tint: 0xff0000,
+            tintFill: true
         });
     }
 }

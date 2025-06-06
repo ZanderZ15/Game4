@@ -76,6 +76,7 @@ class Load extends Phaser.Scene {
         //load in audio
         this.load.audio("coinBoing", "/Audio/jingles_SAX04.ogg");
         this.load.audio("backgroundMush", "/Audio/best-game-console-301284.mp3");
+        this.load.audio("volcano_noise", "/Audio/ominous-8-bit-arcade-drums-353412.mp3")
         this.load.audio("powerUpAudio", "/Audio/jingles_NES12.ogg"); 
         this.load.audio("boing", "/Audio/drop_003.ogg");
         this.load.audio("death", "/Audio/jingles_NES11.ogg"); 

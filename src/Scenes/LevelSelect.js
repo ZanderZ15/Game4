@@ -14,13 +14,25 @@ class Select extends Phaser.Scene {
             fontFamily: '"Press Start 2P"'
         }).setOrigin(.5, 0).setTint(0xffffff);
 
-        this.add.text(width/2, 180, "Level 1 DOUBLE JUMP WOOHOOO, Level 2 GLIDE ZOOM, Level 3 SPEEEDD BOOTSS!", {
+        this.add.text(width/2, 180, "Level 1 DOUBLE JUMP WOOHOOO", { 
             fontSize: '20px',
             fill: '#ffffff',
             fontFamily: '"Press Start 2P"'
         }).setOrigin(.5, 0).setTint(0xffffff);
 
-        this.add.text(width/2, 240, "Collect all the coins to continue past the checkpoint!", {
+        this.add.text(width/2, 240, "Level 2 GLIDE ZOOM", { 
+            fontSize: '20px',
+            fill: '#ffffff',
+            fontFamily: '"Press Start 2P"'
+        }).setOrigin(.5, 0).setTint(0xffffff);
+
+        this.add.text(width/2, 300, "Level 3 hold space for a SPEED BOOST!", { //Level 2 GLIDE ZOOM, Level 3 hold space for a SPEED BOOST!
+            fontSize: '20px',
+            fill: '#ffffff',
+            fontFamily: '"Press Start 2P"'
+        }).setOrigin(.5, 0).setTint(0xffffff);
+
+        this.add.text(width/2, 360, "Collect all the coins to continue past the first checkpoint!", {
             fontSize: '20px',
             fill: '#ffffff',
             fontFamily: '"Press Start 2P"'

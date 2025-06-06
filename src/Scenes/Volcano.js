@@ -13,7 +13,8 @@ class Volcano extends Phaser.Scene {
         this.maxvx = 300;
         this.maxvy = 1000;
         this.score = 0;
-        this.done = false;
+        this.boost = false;
+        this.boostactive = false;
         this.jumps = false;
         this.checkpoint = { //30, 500
             x: 30,
@@ -59,6 +60,7 @@ class Volcano extends Phaser.Scene {
         cursors = this.input.keyboard.createCursorKeys();
         
         this.rKey = this.input.keyboard.addKey('R');
+        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         
 
         // Enable collision handling
@@ -82,6 +84,7 @@ class Volcano extends Phaser.Scene {
         });
         my.vfx.walking.stop();
 
+
         //Power Up: Speed Boost
         this.powerups = this.map.createFromObjects("Collectibles", {
             name: "speedboost",
@@ -99,7 +102,33 @@ class Volcano extends Phaser.Scene {
         this.anims.play("speedboost_anim", this.powerups);
         this.physics.world.enable(this.powerups, Phaser.Physics.Arcade.STATIC_BODY);
         this.powerupGroup = this.add.group(this.powerups);
+
+
+        //Speedboost vfx
+        my.vfx.speedboost = this.add.particles(0, 0, "kenny-particles", {
+            frame: ['light_02.png'],
+            // TODO: Try: add random: true
+            random: false, //Ranodmizes sprites shown
+            scale: {start: 0.03, end: 0.2},
+            // TODO: Try: maxAliveParticles: 8,
+            maxAliveParticles: 10, //Limits total particles
+            lifespan: 100,
+            // TODO: Try: gravityY: -400,
+            gravityY: -500, //Makes float up
+            alpha: {start: 1, end: 0.1}, 
+            frequency: 100,
+            repeat: 0
+        });
+        my.vfx.speedboost.stop();
+
+
+        //Powerup collision
+        this.physics.add.overlap(my.sprite.player, this.powerupGroup, (obj1, obj2) => { 
+            obj2.destroy();
+            this.boost = true;
+        });
         
+
         //Death Clouds
         this.clouds = this.map.createFromObjects("Death Cloud", {
             name: "cloud",
@@ -109,12 +138,15 @@ class Volcano extends Phaser.Scene {
         this.physics.world.enable(this.clouds, Phaser.Physics.Arcade.STATIC_BODY);
         this.cloudGroup = this.add.group(this.clouds);
         for (let cloud of this.cloudGroup.getChildren()) {
-            cloud.visible = true;
+            cloud.visible = false;
         }
+
+
+        //Cloud Collision logic
         this.physics.add.overlap(my.sprite.player, this.cloudGroup, (obj1, obj2) => { 
-            console.log("NE");
-            this.scene.restart();
+            //this.scene.restart();
         });
+
 
         //End
         this.end = this.map.createFromObjects("Collectibles", {
@@ -125,14 +157,39 @@ class Volcano extends Phaser.Scene {
         this.physics.world.enable(this.end, Phaser.Physics.Arcade.STATIC_BODY);
         this.endGroup = this.add.group(this.end);
         
+
+        //Lava
+        this.lava = this.map.createFromObjects("Death", {
+            name: "lava",
+            key: "generated_sheet",
+            frame: 0
+        });
+        this.physics.world.enable(this.lava, Phaser.Physics.Arcade.STATIC_BODY);
+        this.lavaGroup = this.add.group(this.lava);
+        for (let lava of this.lavaGroup.getChildren()) {
+            lava.visible = false;
+        }
+
+
+        //Lava Collision logic
+        this.physics.add.overlap(my.sprite.player, this.lavaGroup, (obj1, obj2) => { 
+            this.scene.restart();
+        });
+
+
         // Camera
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         this.cameras.main.startFollow(my.sprite.player, true, 0.25, 0.25); // (target, [,roundPixels][,lerpX][,lerpY])
         this.cameras.main.setDeadzone(50, 50);
         this.cameras.main.setZoom(this.SCALE);
         
-        
-        
+
+        //Hitboxes
+        this.input.keyboard.on('keydown-D', () => {
+            this.physics.world.drawDebug = this.physics.world.drawDebug ? false : true
+            this.physics.world.debugGraphic.clear()
+        }, this);
+        this.physics.world.drawDebug = this.physics.world.drawDebug ? false : true
     }   
     update() {
         //Cloud Movement pt1
@@ -145,11 +202,21 @@ class Volcano extends Phaser.Scene {
         //Cloud movement pt2
         if (my.sprite.player.body.x >= 2160) {
             for (let cloud of this.cloudGroup.getChildren()) {
-                this.cloud_velocity = 5;
+                this.cloud_velocity = 6;
             }
         }
-        //Cloud Particles
+        //Cloud Particle Counter
         this.cloud_counter ++;
+        
+
+        //Cloud Emmitter
+        if (this.cloud_counter >= 10) {
+            for (let cloud of this.cloudGroup.getChildren()) {
+                this.dc(cloud.body);
+            }
+            
+            this.cloud_counter = 0;
+        }
         
         //Player Movement
         if(cursors.left.isDown) {
@@ -159,11 +226,18 @@ class Volcano extends Phaser.Scene {
             // Particle Following
             my.vfx.walking.startFollow(my.sprite.player, my.sprite.player.displayWidth/2-5, my.sprite.player.displayHeight/2-2, false);
             my.vfx.walking.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
+            
+            my.vfx.speedboost.startFollow(my.sprite.player, my.sprite.player.displayWidth/2-5, my.sprite.player.displayHeight/2-2, false);
+            my.vfx.speedboost.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
+            if (this.boostactive) {my.vfx.speedboost.start();}
+            else {my.vfx.speedboost.stop();}
             // Only play smoke effect if touching the ground
             if (my.sprite.player.body.blocked.down) {
                 my.vfx.walking.start();
+                
             } else {
                 my.vfx.walking.stop();
+                my.vfx.speedboost.stop();
             }
         } else if(cursors.right.isDown) {
             my.sprite.player.setAccelerationX(this.ACCELERATION);
@@ -172,11 +246,19 @@ class Volcano extends Phaser.Scene {
             // Particle Following
             my.vfx.walking.startFollow(my.sprite.player, my.sprite.player.displayWidth/2-20, my.sprite.player.displayHeight/2-2, false);
             my.vfx.walking.setParticleSpeed(-this.PARTICLE_VELOCITY, 0);
+            
+            my.vfx.speedboost.startFollow(my.sprite.player, my.sprite.player.displayWidth/2-20, my.sprite.player.displayHeight/2-2, false);
+            my.vfx.speedboost.setParticleSpeed(this.PARTICLE_VELOCITY, 0);
+            
+            if (this.boostactive) {my.vfx.speedboost.start();}
+            else {my.vfx.speedboost.stop();}
             // Only play smoke effect if touching the ground
             if (my.sprite.player.body.blocked.down) {
                 my.vfx.walking.start();
+                
             } else {
                 my.vfx.walking.stop();
+                my.vfx.speedboost.stop();
             }
         } else {
             // Set acceleration to 0 and have DRAG take over
@@ -185,6 +267,7 @@ class Volcano extends Phaser.Scene {
             my.sprite.player.anims.play('idle');
             //particle vfx stop
             my.vfx.walking.stop();
+            my.vfx.speedboost.stop();
         }
 
         //Cap Player's Velocity
@@ -221,6 +304,15 @@ class Volcano extends Phaser.Scene {
         }
         //Could be altered so that the jump is an integer and the player could have multiple extra jumps
 
+        //Player Boost
+        if(Phaser.Input.Keyboard.JustDown(this.spaceKey) && this.boost) {
+            this.ACCELERATION *= 2;
+            this.boostactive = true;
+        }
+        if (Phaser.Input.Keyboard.JustUp(this.spaceKey) && this.boost) {
+            this.ACCELERATION *= .5;
+            this.boostactive = false;
+        }
         //Restarts
         if(Phaser.Input.Keyboard.JustDown(this.rKey)) {
             this.scene.restart();
@@ -267,6 +359,25 @@ class Volcano extends Phaser.Scene {
             gravityY: 200, //Makes float up
             alpha: {start: 1, end: 0.2}, 
             repeat:0
+        });
+    }
+    //DeathClouds vfx (place them 20px in front)
+    dc(body) {
+        this.add.particles(body.x + 20, body.y, "kenny-particles", {
+            frame: ['smoke_03.png', 'smoke_07.png', 'smoke_08.png', 'spark_01.png', 'spark_02.png'],
+            // TODO: Try: add random: true
+            random: true, //Ranodmizes sprites shown
+            scale: {start: 0.03, end: 0.2},
+            // TODO: Try: maxAliveParticles: 8,
+            maxAliveParticles: 10, //Limits total particles
+            lifespan: 500,
+            // TODO: Try: gravityY: -400,
+            gravityY: 0, //Makes float up
+            alpha: {start: 0.1, end: 1}, 
+            frequency: 500,
+            repeat: 0,
+            blendMode: 'ADD',
+            tint: { start: 0xff0000, end: 0x0000ff}
         });
     }
 }

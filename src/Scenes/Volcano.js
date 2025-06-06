@@ -64,7 +64,7 @@ class Volcano extends Phaser.Scene {
         // Enable collision handling
         this.physics.add.collider(my.sprite.player, this.groundLayer);
         
-        
+
         //Movement vfx
         my.vfx.walking = this.add.particles(0, 0, "kenny-particles", {
             frame: ['flame_05.png', 'flame_06.png'],
@@ -225,7 +225,7 @@ class Volcano extends Phaser.Scene {
         if(Phaser.Input.Keyboard.JustDown(this.rKey)) {
             this.scene.restart();
         }
-        if (my.sprite.player.y < 0) {
+        if (my.sprite.player.y > 400) {
             this.scene.restart();
         }
     }

@@ -29,10 +29,10 @@ class Mushroom extends Phaser.Scene {
 
         //load in background music
     
-        if(!this.sound.get("backgroundMush"))
+        if(!this.sound.get("backgroundMush")) //checking if the music is laready playing, no overlapping
         {
-            this.backGroundMusic = this.sound.add("backgroundMush", {loop: true, volume: 0.2});
-            this.backGroundMusic.play();
+            this.backGroundMusic = this.sound.add("backgroundMush", {loop: true, volume: 0.2}); //assigning a variable
+            this.backGroundMusic.play(); //starting the music or playing it
         }
         
         // Create a new tilemap game object which uses 18x18 pixel tiles, and is
